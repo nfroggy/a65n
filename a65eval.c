@@ -362,7 +362,7 @@ opr2:		    token.attr = BINARY + RELAT + OPR;
 				if (*p == '\n') { exp_error('"');  break; }
 				*p = '\0';  quote = FALSE;
 				if ((token.valu = token.sval[0]) && token.sval[1])
-				token.valu = (token.valu << 8) + token.sval[1];
+					token.valu = (token.valu << 8) + token.sval[1];
 				break;
 
 	case ',':   token.attr = SEP;

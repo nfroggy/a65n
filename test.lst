@@ -1,0 +1,29 @@
+                        	titl	"sneed"
+                        
+   0005                 foo	equ	$5
+   0006                 bar	equ	$6
+                        	
+   8000                 	org	$8000
+   8000                 string
+   8000   68 65 6c 6c   	db	"hello",0,1,2,3,-1,-2,-3
+   8004   6f 00 01 02   
+   8008   03 ff fe fd   
+   800c   67 6f 6f 64   	db	"goodbye"
+   8010   62 79 65      
+   8013   01 00 02 00   	dw	1,2,3,4,-1,-2,-3,-4
+   8017   03 00 04 00   
+   801b   ff ff fe ff   
+   801f   fd ff fc ff   
+   8023   4c 00 80      	jmp	string
+                        	
+   8026                 start
+   8026   a9 61         	lda	#'a'
+   8028   85 06         	sta	bar
+   802a   4c 26 80      	jmp	start
+                        	
+                        
+   802d                 	end
+sneed
+
+0006  bar           0005  foo           8026  start         8000  string    
+

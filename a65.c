@@ -76,8 +76,9 @@ void main(int argc, char **argv) {
     void hclose(), hopen(), hputc();
     void error(), fatal_error(), warning();
 
-    printf("6502 Cross-Assembler (Portable) Ver 0.1\n");
-    printf("Copyright (c) 1986 William C. Colley, III\n\n");
+    printf("6502 Cross-Assembler (Portable) Ver 0.2n\n");
+    printf("Copyright (c) 1986 William C. Colley, III\n");
+	printf("Modifications (c) 2023 Nathan Misner\n\n");
 
     while (--argc > 0) {
 		if (**++argv == '-') {
@@ -324,6 +325,47 @@ static void pseudo_op() {
 
     o = obj;
     switch (opcod -> valu) {
+	case DB:
+		do_label();
+		do {
+			if ((lex()->attr & TYPE) == STR) {
+				for (s = token.sval; *s; *o++ = *s++) {
+					bytes++;
+				}
+				if ((lex()->attr & TYPE) != SEP) unlex();
+			}
+			else {
+				unlex();
+				if ((u = expr()) > 0xff && u < 0xff80) {
+					u = 0;  error('V');
+				}
+				*o++ = low(u);  ++bytes;
+			}
+		} while ((token.attr & TYPE) == SEP);
+		break;
+
+	case DS:
+		do_label();
+		while ((lex()->attr & TYPE) != EOL) {
+			if ((token.attr & TYPE) == STR) {
+				for (s = token.sval; *s; *o++ = *s++)
+					++bytes;
+				if ((lex()->attr & TYPE) != SEP) unlex();
+			}
+			else error('S');
+		}
+		break;
+
+	case DW:
+		do_label();
+		do {
+			if ((lex()->attr & TYPE) == SEP) u = 0;
+			else { unlex();  u = expr(); }
+			*o++ = low(u);  *o++ = high(u);
+			bytes += 2;
+		} while ((token.attr & TYPE) == SEP);
+		break;
+
 	case ELSE:  
 		listhex = FALSE;
 		if (ifsp) off = (ifstack[ifsp] = -ifstack[ifsp]) != ON;
@@ -368,42 +410,6 @@ static void pseudo_op() {
 			}
 		}
 		else error('L');
-		break;
-
-	case FCB:   
-		do_label();
-		do {
-			if ((lex() -> attr & TYPE) == SEP) u = 0;
-			else {
-				unlex();
-				if ((u = expr()) > 0xff && u < 0xff80) {
-					u = 0;  error('V');
-				}
-			}
-			*o++ = low(u);  ++bytes;
-		} while ((token.attr & TYPE) == SEP);
-		break;
-
-	case FCC:   
-		do_label();
-		while ((lex() -> attr & TYPE) != EOL) {
-			if ((token.attr & TYPE) == STR) {
-				for (s = token.sval; *s; *o++ = *s++)
-					++bytes;
-				if ((lex() -> attr & TYPE) != SEP) unlex();
-			}
-			else error('S');
-		}
-		break;
-
-	case FDB:   
-		do_label();
-		do {
-			if ((lex() -> attr & TYPE) == SEP) u = 0;
-			else { unlex();  u = expr(); }
-			*o++ = low(u);  *o++ = high(u);
-			bytes += 2;
-		} while ((token.attr & TYPE) == SEP);
 		break;
 
 	case IF:   

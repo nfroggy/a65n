@@ -114,20 +114,22 @@ all modules of the cross-assembler.
 
 /*  Line assembler (A65.C) pseudo-op opcode token values:		*/
 
-#define	ELSE		1
-#define	END		2
-#define	ENDI		3
-#define	EQU		4
-#define	FCB		5
-#define	FCC		6
-#define	FDB		7
-#define	IF		8
-#define	INCL		9
-#define	ORG		10
-#define	PAGE		11
-#define	RMB		12
-#define	SET		13
-#define	TITL		14
+typedef enum {
+	DB = 1,
+	DS,
+	DW,
+	ELSE,
+	END,
+	ENDI,
+	EQU,
+	IF,
+	INCL,
+	ORG,
+	PAGE,
+	RMB,
+	SET,
+	TITL
+} PSEUDO_OP;
 
 /*  Line assembler (A65.C) machine opcode attribute values:		*/
 
@@ -186,7 +188,7 @@ typedef struct {
 
 #define	AND		0
 #define	GE		1
-#define	HIGH		2
+#define	HIGH	2
 #define	LE		3
 #define	LOW		4
 #define	MOD		5

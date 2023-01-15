@@ -679,13 +679,11 @@
 
              The FCB (Form Constant Bytes) pseudo-op allows arbitrary 
         bytes to be spliced into the object code.  Its argument is a 
-        chain of zero or more expressions that evaluate to -128 thru 255 
-        separated by commas.  If a comma occurs with no preceding 
-        expression, a $00 byte is spliced into the object code.  The 
-        sequence of bytes $FE $FF, $00, $01, $02 could be spliced into 
-        the code with the following statement:
+        chain of one or more expressions that evaluate to -128 thru 255 
+        separated by commas. The sequence of bytes $FE $FF, $00, $01, $02
+	could be spliced into the code with the following statement:
 
-                       FCB       -2, -1, , 1, 2
+                       FCB       -2, -1, 0, 1, 2
 
 
         4.4  Pseudo-ops -- FCC
