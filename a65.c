@@ -48,9 +48,15 @@ assembly routines uses the expression analyzer and the lexical analyzer to
 parse the source line and convert it into the object bytes that it represents.
 */
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 /*  Get global goodies:  */
 
 #include "a65.h"
+#include "a65eval.h"
+#include "a65util.h"
 
 /*  Define global mailboxes for all modules:				*/
 
@@ -61,6 +67,13 @@ unsigned address, argattr, bytes, errors, listleft, obj[MAXLINE], pagelen, pc;
 FILE *filestk[FILES], *source;
 TOKEN token;
 
+/* Static function definitions: */
+static void asm_line();
+static void flush();
+static void do_label();
+static void normal_op();
+static void pseudo_op();
+
 /*  Mainline routine.  This routine parses the command line, sets up	*/
 /*  the assembler at the beginning of each pass, feeds the source text	*/
 /*  to the line assembler, feeds the result to the listing and hex file	*/
@@ -70,15 +83,9 @@ static int done, ifsp, off;
 
 void main(int argc, char **argv) {
     SCRATCH unsigned *o;
-    int newline();
-    void asm_line();
-    void lclose(), lopen(), lputs();
-    void hclose(), hopen(), hputc();
-    void error(), fatal_error(), warning();
 
     printf("6502 Cross-Assembler (Portable) Ver 0.2n\n");
-    printf("Copyright (c) 1986 William C. Colley, III\n");
-	printf("Modifications (c) 2023 Nathan Misner\n\n");
+    printf("Copyright (c) 1986 William C. Colley, III\n\n");
 
     while (--argc > 0) {
 		if (**++argv == '-') {
@@ -147,12 +154,8 @@ static int ifstack[IFDEPTH] = { ON };
 
 static OPCODE *opcod;
 
-void asm_line() {
+static void asm_line() {
     SCRATCH int i;
-    int isalph(), popc();
-    OPCODE *find_code(), *find_operator();
-    void do_label(), flush(), normal_op(), pseudo_op();
-    void error(), pops(), pushc(), trash();
 
     address = pc;  bytes = 0;  eject = forwd = listhex = FALSE;
     for (i = 0; i < BIGINST; obj[i++] = NOP);
@@ -199,12 +202,22 @@ static void flush() {
 
 static void do_label() {
     SCRATCH SYMBOL *l;
-    SYMBOL *find_symbol(), *new_symbol();
-    void error();
+	char *ch;
 
     if (label[0]) {
 		listhex = TRUE;
+
+		// strip off the trailing colon if it exists
+		ch = label;
+		while (*ch) {
+			if ((ch[0] == ':') && (ch[1] == '\0')) {
+				ch[0] = '\0';
+			}
+			ch++;
+		}
+
 		if (pass == 1) {
+			// add the label to the symbol tree
 			if (!((l = new_symbol(label)) -> attr)) {
 				l -> attr = FORWD + VAL;
 				l -> valu = pc;
@@ -222,8 +235,6 @@ static void do_label() {
 
 static void normal_op() {
     SCRATCH unsigned opcode, operand;
-    unsigned do_args();
-    void do_label(), error();
 
     opcode = opcod -> valu;  bytes = BIGINST;
     do_label();  operand = do_args();
@@ -318,10 +329,6 @@ static void pseudo_op() {
     SCRATCH char *s;
     SCRATCH unsigned *o, u;
     SCRATCH SYMBOL *l;
-    unsigned expr();
-    SYMBOL *find_symbol(), *new_symbol();
-    TOKEN *lex();
-    void do_label(), error(), fatal_error(), hseek(), unlex();
 
     o = obj;
     switch (opcod -> valu) {

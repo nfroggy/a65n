@@ -133,6 +133,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="a65.h" />
+    <ClInclude Include="a65eval.h" />
+    <ClInclude Include="a65util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

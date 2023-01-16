@@ -53,15 +53,15 @@ This module contains the following utility packages:
 	5)  error flagging
 */
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 /*  Get global goodies:  */
 
 #include "a65.h"
-
-/*  Make sure that MSDOS compilers using the large memory model know	*/
-/*  that calloc() returns pointer to char as an MSDOS far pointer is	*/
-/*  NOT compatible with the int type as is usually the case.		*/
-
-char *calloc();
+#include "a65eval.h"
+#include "a65util.h"
 
 /*  Get access to global mailboxes defined in A65.C:			*/
 
@@ -75,6 +75,14 @@ extern unsigned address, bytes, errors, listleft, obj[], pagelen;
 
 static SYMBOL *sroot = NULL;
 
+/* Static function declarations: */
+static OPCODE *bsearchtbl(OPCODE *lo, OPCODE *hi, char *nam);
+static int ustrcmp(char *s, char *t);
+static void list_sym(SYMBOL *sp);
+static void check_page();
+static void record(unsigned typ);
+static void putb(unsigned b);
+
 /*  Add new symbol to symbol table.  Returns pointer to symbol even if	*/
 /*  the symbol already exists.  If there's not enough memory to store	*/
 /*  the new symbol, a fatal error occurs.				*/
@@ -85,7 +93,7 @@ SYMBOL *new_symbol(char *nam) {
     void fatal_error();
 
     for (p = &sroot; (q = *p) && (i = strcmp(nam,q -> sname)); )
-	p = i < 0 ? &(q -> left) : &(q -> right);
+		p = i < 0 ? &(q -> left) : &(q -> right);
     if (!q) {
 		if (!(*p = q = (SYMBOL *)calloc(1,sizeof(SYMBOL) + strlen(nam))))
 			fatal_error(SYMBOLS);
@@ -102,7 +110,7 @@ SYMBOL *find_symbol(char *nam) {
     SCRATCH SYMBOL *p;
 
     for (p = sroot; p && (i = strcmp(nam,p -> sname));
-	p = i < 0 ? p -> left : p -> right);
+		p = i < 0 ? p -> left : p -> right);
     return p;
 }
 
@@ -111,8 +119,6 @@ SYMBOL *find_symbol(char *nam) {
 /*  NULL if the opcode doesn't exist.					*/
 
 OPCODE *find_code(char *nam) {
-    OPCODE *bsearch();
-
     static OPCODE opctbl[] = {
 		{ TWOOP,			0x61,	"ADC"	},
 		{ TWOOP,			0x21,	"AND"	},
@@ -190,7 +196,7 @@ OPCODE *find_code(char *nam) {
 		{ INHOP,			0x98,	"TYA"	}
     };
 
-    return bsearch(opctbl,opctbl + (sizeof(opctbl) / sizeof(OPCODE)),nam);
+    return bsearchtbl(opctbl,opctbl + (sizeof(opctbl) / sizeof(OPCODE)),nam);
 }
 
 /*  Operator table search routine.  This routine pats down the		*/
@@ -198,8 +204,6 @@ OPCODE *find_code(char *nam) {
 /*  to it or NULL if the opcode doesn't exist.				*/
 
 OPCODE *find_operator(char *nam) {
-    OPCODE *bsearch();
-
     static OPCODE oprtbl[] = {
 		{ REG,						'A',		"A"		},
 		{ BINARY + LOG1  + OPR,		AND,		"AND"	},
@@ -221,10 +225,10 @@ OPCODE *find_operator(char *nam) {
 		{ REG,						'Y',		"Y"		},
     };
 
-    return bsearch(oprtbl,oprtbl + (sizeof(oprtbl) / sizeof(OPCODE)),nam);
+    return bsearchtbl(oprtbl,oprtbl + (sizeof(oprtbl) / sizeof(OPCODE)),nam);
 }
 
-static OPCODE *bsearch(OPCODE *lo, OPCODE *hi, char *nam) {
+static OPCODE *bsearchtbl(OPCODE *lo, OPCODE *hi, char *nam) {
     SCRATCH int i;
     SCRATCH OPCODE *chk;
 
@@ -256,9 +260,6 @@ static FILE *list = NULL;
 /*  lputs() and lclose() have no effect.				*/
 
 void lopen(char *nam) {
-    FILE *fopen();
-    void fatal_error(), warning();
-
     if (list) warning(TWOLST);
     else if (!(list = fopen(nam,"w"))) fatal_error(LSTOPEN);
     return;
@@ -272,7 +273,6 @@ void lopen(char *nam) {
 void lputs() {
     SCRATCH int i, j;
     SCRATCH unsigned *o;
-    void check_page(), fatal_error();
 
     if (list) {
 		i = bytes;  o = obj;
@@ -301,8 +301,6 @@ void lputs() {
 static int col = 0;
 
 void lclose() {
-    void fatal_error(), list_sym();
-
     if (list) {
 		if (sroot) {
 			list_sym(sroot);
@@ -315,8 +313,6 @@ void lclose() {
 }
 
 static void list_sym(SYMBOL *sp) {
-    void check_page();
-
     if (sp) {
 		list_sym(sp -> left);
 		fprintf(list,"%04x  %-10s",sp -> valu,sp -> sname);
@@ -368,8 +364,6 @@ void hopen(char *nam) {
 /*  disk fills up, a fatal error occurs.				*/
 
 void hputc(unsigned c) {
-    void record();
-
     if (hex) {
 		buf[cnt++] = c;
 		if (cnt == HEXSIZE) record(0);
@@ -383,8 +377,6 @@ void hputc(unsigned c) {
 /*  occurs.								*/
 
 void hseek(unsigned a) {
-    void record();
-
     if (hex) {
 		if (cnt) record(0);
 		addr = a;
@@ -397,8 +389,6 @@ void hseek(unsigned a) {
 /*  fatal error occurs.							*/
 
 void hclose() {
-    void fatal_error(), record();
-
     if (hex) {
 		if (cnt) record(0);
 		record(1);
@@ -409,8 +399,6 @@ void hclose() {
 
 static void record(unsigned typ) {
     SCRATCH unsigned i;
-    void fatal_error(), putb();
-
     putc(':',hex);  putb(cnt);  putb(high(addr));
     putb(low(addr));  putb(typ);
     for (i = 0; i < cnt; ++i) putb(buf[i]);

@@ -8,7 +8,8 @@ your workflow.
 =====Why not to use this assembler=====
 - The code has that "old UNIX program" stank to it, where you have a lot of
   buffers with hard-coded sizes and if you exceed them the program will
-  (hopefully) crash without telling you why.
+  (hopefully) crash without telling you why. See a65.h if you want to fiddle
+  with the buffer sizes.
 - It's fairly opinionated regarding syntax. It doesn't support a ton of 6502
   "dialects" like all the popular assemblers do
 - It's an absolute assembler, so no linking
@@ -27,6 +28,7 @@ your workflow.
 - Reformat code for ANSI style function declarations - done
 - Change "FCB", "FCC", "FDB" to "DB", "DS", "DW" - done
 - Change the syntax so "DB" accepts string(s) as arguments - done
+- Change the syntax so labels can have colons after them - done
 - Give each .c file its own header file
 - Change the assembler to output binary files instead of Intel HEX
 - Allow for forcing loads/stores to not be optimized for zero page
@@ -41,7 +43,6 @@ your workflow.
 =====License=====
 
 Copyright (c) 1986 William C. Colley, III
-Changes (c) 2023 Nathan Misner
 
 This package may be used for any commercial or non-commercial purpose.  It may
 be copied and distributed freely provided that any fee charged by the

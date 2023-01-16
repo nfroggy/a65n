@@ -1,3 +1,6 @@
+#ifndef A65_H
+#define A65_H
+
 /*
 	HEADER:		CUG219;
 	TITLE:		6502 Cross-Assembler (Portable);
@@ -239,3 +242,5 @@ typedef struct {
 /*  Utility package (A65UTIL.C) hex file output routines:		*/
 
 #define	HEXSIZE		32
+
+#endif

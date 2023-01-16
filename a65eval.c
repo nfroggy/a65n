@@ -50,6 +50,8 @@ arithmetic expressions.
 /*  Get global goodies:  */
 
 #include "a65.h"
+#include "a65eval.h"
+#include "a65util.h"
 
 /*  Get access to global mailboxes defined in A65.C:			*/
 
@@ -58,6 +60,14 @@ extern int filesp, forwd, pass;
 extern unsigned argattr, pc;
 extern FILE *filestk[], *source;
 extern TOKEN token;
+
+/* Static function definitions: */
+static unsigned eval(unsigned pre);
+static void exp_error(char c);
+static void make_number(unsigned base);
+static int isnum(char c);
+static int ishex(char c);
+static int isalnum(char c);
 
 /*  Machine opcode argument field parsing routine.  The token stream	*/
 /*  from the lexical analyzer is processed to extract addressing mode	*/
@@ -74,10 +84,6 @@ static int bad;
 unsigned do_args() {
     SCRATCH int c;
     SCRATCH unsigned u;
-    TOKEN *lex();
-    int popc();
-    unsigned eval(), expr();
-    void exp_error(), pushc(), trash(), unlex();
 
     argattr = ARGNUM;  u = 0;  bad = FALSE;
     switch (lex() -> attr & TYPE) {
@@ -153,7 +159,6 @@ have_number:
 
 unsigned expr() {
     SCRATCH unsigned u;
-    unsigned eval();
 
     bad = FALSE;
     u = eval(START);
@@ -162,8 +167,6 @@ unsigned expr() {
 
 static unsigned eval(unsigned pre) {
    register unsigned op, u, v;
-   TOKEN *lex();
-   void exp_error(), unlex();
 
 	for (;;) {
 		u = op = lex()->valu;
@@ -268,9 +271,6 @@ TOKEN *lex() {
 	SCRATCH unsigned b;
 	SCRATCH OPCODE *o;
 	SCRATCH SYMBOL *s;
-	OPCODE *find_operator();
-	SYMBOL *find_symbol();
-	void exp_error(), make_number(), pops(), pushc(), trash();
 
 	if (oldt) { oldt = FALSE;  return &token; }
 	trash();
@@ -377,7 +377,6 @@ opr2:		    token.attr = BINARY + RELAT + OPR;
 static void make_number(unsigned base) {
     SCRATCH char *p;
     SCRATCH unsigned d;
-    void exp_error();
 
     token.attr = VAL;
     token.valu = 0;
@@ -419,8 +418,6 @@ void unlex() {
 /*  current token.  Leading blank space is trashed.			*/
 
 void pops(char *s) {
-    void pushc(), trash();
-
     trash();
     for (; isalnum(*s = popc()); ++s);
     pushc(*s);  *s = '\0';
@@ -431,7 +428,6 @@ void pops(char *s) {
 
 void trash() {
     SCRATCH char c;
-    void pushc();
 
     while ((c = popc()) == ' ');
     pushc(c);
@@ -476,8 +472,6 @@ void pushc(char c) {
 /*  EOF	has been reached on the main source file, zero otherwise.	*/
 
 int newline() {
-    void fatal_error();
-
     oldc = '\0';  lptr = line;
     oldt = eol = FALSE;
     while (feof(source)) {

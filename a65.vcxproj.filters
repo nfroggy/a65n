@@ -29,5 +29,11 @@
     <ClInclude Include="a65.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="a65eval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="a65util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
