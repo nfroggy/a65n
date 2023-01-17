@@ -9,6 +9,11 @@ madoola.lst
 madoola.bin
 variables.asm
 
+# build artifacts
+*.o
+*.d
+a65
+
 # User-specific files
 *.rsuser
 *.suo

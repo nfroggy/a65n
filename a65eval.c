@@ -47,6 +47,8 @@ expression analyzer processes the token stream into unsigned results of
 arithmetic expressions.
 */
 
+#include <ctype.h>
+
 /*  Get global goodies:  */
 
 #include "a65.h"
@@ -67,7 +69,7 @@ static void exp_error(char c);
 static void make_number(unsigned base);
 static int isnum(char c);
 static int ishex(char c);
-static int isalnum(char c);
+static int isalphnum(char c);
 
 /*  Machine opcode argument field parsing routine.  The token stream	*/
 /*  from the lexical analyzer is processed to extract addressing mode	*/
@@ -174,7 +176,7 @@ static unsigned eval(unsigned pre) {
 		case IMM:   exp_error('S');  break;
 
 		case SEP:	if (pre != START) unlex();
-		case EOL:	exp_error('E');  return;
+		case EOL:	exp_error('E');  return 0;
 
 		case OPR:
 			if (!(token.attr & UNARY)) { exp_error('E');  break; }
@@ -402,7 +404,7 @@ static int ishex(char c) {
     return isnum(c) || ((c = toupper(c)) >= 'A' && c <= 'F');
 }
 
-static int isalnum(char c) {
+static int isalphnum(char c) {
     return isalph(c) || isnum(c);
 }
 
@@ -419,7 +421,7 @@ void unlex() {
 
 void pops(char *s) {
     trash();
-    for (; isalnum(*s = popc()); ++s);
+    for (; isalphnum(*s = popc()); ++s);
     pushc(*s);  *s = '\0';
     return;
 }

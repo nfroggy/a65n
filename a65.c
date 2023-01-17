@@ -81,7 +81,7 @@ static void pseudo_op();
 
 static int done, ifsp, off;
 
-void main(int argc, char **argv) {
+int main(int argc, char **argv) {
     SCRATCH unsigned *o;
 
     printf("6502 Cross-Assembler (Portable) Ver 0.2n\n");
