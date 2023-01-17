@@ -109,32 +109,28 @@ void lputs();
 void lclose();
 
 
-/*  Hex file open routine.  If a hex file is already open, a warning	*/
-/*  occurs.  If the hex file doesn't open correctly, a fatal error		*/
-/*  occurs.  If no hex file is open, all calls to hputc(), hseek(), and	*/
-/*  hclose() have no effect.											*/
+/*  Binary file open routine.  If the file is already open, a warning	*/
+/*  occurs.  If the file doesn't open correctly, a fatal error occurs.	*/
+/*  If no binary file is open, all calls to bputc(), bseek(), and		*/
+/*  bclose() have no effect.											*/
 
 void bopen(char *nam);
 
 
-/*  Hex file write routine.  The data byte is appended to the current	*/
-/*  record.  If the record fills up, it gets written to disk.  If the	*/
-/*  disk fills up, a fatal error occurs.								*/
+/*  Binary file write routine.  The data byte is appended to the output	*/
+/*  buffer.  If the buffer fills up, it gets written to disk. 			*/
 
 void bputc(unsigned c);
 
 
-/*  Hex file address set routine.  The specified address becomes the	*/
-/*  load address of the next record.  If a record is currently open,	*/
-/*  it gets written to disk.  If the disk fills up, a fatal error		*/
-/*  occurs.																*/
+/*  Binary file address set routine. Note that this can only be used to */
+/*  seek forwards in the file. Seeking backwards will cause an error.	*/
 
 void bseek(unsigned a);
 
 
-/*  Hex file close routine.  Any open record is written to disk, the	*/
-/*  EOF record is added, and file is closed.  If the disk fills up, a	*/
-/*  fatal error occurs.													*/
+/*  Binary file close routine. All buffered data is written to disk,	*/
+/*  and the output file is closed.										*/
 
 void bclose();
 

@@ -206,7 +206,6 @@ OPCODE *find_code(char *nam) {
 OPCODE *find_operator(char *nam) {
     static OPCODE oprtbl[] = {
 		{ REG,						'A',		"A"		},
-		{ UNARY + UOP3 + OPR,		ABS,		"ABS"	},
 		{ BINARY + LOG1  + OPR,		AND,		"AND"	},
 		{ BINARY + RELAT + OPR,		'=',		"EQ"	},
 		{ BINARY + RELAT + OPR,		GE,			"GE"	},
@@ -336,21 +335,20 @@ static void check_page() {
     return;
 }
 
-/*  Buffer storage for hex output file.  This allows the hex file	*/
+/*  Buffer storage for binary output file.  This allows the file	*/
 /*  output routines to do all of the required buffering and record	*/
 /*  forming without the	main routine having to fool with it.		*/
 
-static FILE *hex = NULL;
 static FILE *outfile = NULL;
 static unsigned cnt = 0;
 static unsigned addr = 0;
 static unsigned sum = 0;
 static uint8_t buf[HEXSIZE];
 
-/*  Hex file open routine.  If a hex file is already open, a warning	*/
-/*  occurs.  If the hex file doesn't open correctly, a fatal error	*/
-/*  occurs.  If no hex file is open, all calls to hputc(), hseek(), and	*/
-/*  hclose() have no effect.						*/
+/*  Binary file open routine.  If the file is already open, a warning	*/
+/*  occurs.  If the file doesn't open correctly, a fatal error occurs.	*/
+/*  If no binary file is open, all calls to bputc(), bseek(), and		*/
+/*  bclose() have no effect.											*/
 
 void bopen(char *filename) {
 	if (outfile) {
@@ -364,9 +362,8 @@ void bopen(char *filename) {
 	}
 }
 
-/*  Hex file write routine.  The data byte is appended to the current	*/
-/*  record.  If the record fills up, it gets written to disk.  If the	*/
-/*  disk fills up, a fatal error occurs.				*/
+/*  Binary file write routine.  The data byte is appended to the output	*/
+/*  buffer.  If the buffer fills up, it gets written to disk. 			*/
 
 void bputc(unsigned c) {
 	if (outfile) {
@@ -375,10 +372,8 @@ void bputc(unsigned c) {
 	}
 }
 
-/*  Hex file address set routine.  The specified address becomes the	*/
-/*  load address of the next record.  If a record is currently open,	*/
-/*  it gets written to disk.  If the disk fills up, a fatal error	*/
-/*  occurs.								*/
+/*  Binary file address set routine. Note that this can only be used to */
+/*  seek forwards in the file. Seeking backwards will cause an error.	*/
 
 void bseek(unsigned a) {
 	unsigned cursor = addr + cnt;
@@ -392,7 +387,7 @@ void bseek(unsigned a) {
 		}
 		/* don't allow seeking backwards */
 		else if (cursor > a) {
-			fatal_error("Invalid ORG statement");
+			error('S');
 		}
 		/* pad the file to make up the difference */
 		else {
@@ -404,9 +399,8 @@ void bseek(unsigned a) {
 	}
 }
 
-/*  Hex file close routine.  Any open record is written to disk, the	*/
-/*  EOF record is added, and file is closed.  If the disk fills up, a	*/
-/*  fatal error occurs.							*/
+/*  Binary file close routine. All buffered data is written to disk,	*/
+/*  and the output file is closed.										*/
 
 void bclose() {
 	if (outfile) {

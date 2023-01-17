@@ -167,13 +167,16 @@ typedef struct {
 
 /*  Lexical analyzer (A65EVAL.C) token attribute values:		*/
 
-#define	EOL		0	/*  end of line				*/
-#define	SEP		1	/*  field separator			*/
-#define	OPR		2	/*  operator				*/
-#define	STR		3	/*  character string			*/
-#define	VAL		4	/*  value				*/
-#define	IMM		5	/*  immediate designator		*/
-#define	REG		6	/*  register designator			*/
+typedef enum {
+	EOL = 0,		/* end of line */
+	SEP,			/* field separator */
+	OPR,			/* operator */
+	STR,			/* character string */
+	VAL,			/* value */
+	IMM,			/* immediate designator */
+	REG,			/* register designator */
+	ABS,			/* force absolute addressing */
+};
 
 /*  Lexical analyzer (A65EVAL.C) token attribute word flag masks:	*/
 
@@ -190,7 +193,6 @@ typedef struct {
 /*  use ASCII characters):						*/
 
 typedef enum {
-	ABS = 0,
 	AND,
 	GE,
 	HIGH,

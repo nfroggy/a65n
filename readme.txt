@@ -30,8 +30,8 @@ your workflow.
 - Change the syntax so "DB" accepts string(s) as arguments - done
 - Change the syntax so labels can have colons after them - done
 - Give each .c file its own header file - done
-- Change the assembler to output binary files instead of Intel HEX
-- Allow for forcing loads/stores to not be optimized for zero page
+- Change the assembler to output binary files instead of Intel HEX - done
+- Allow for forcing loads/stores to not be optimized for zero page - done (! operator)
 - Add a "MSG" statement that prints out arbitrary strings and symbols
 - Print the error messages to stdout instead of the assembler listing
 - Add a makefile for our GNU/Linux and Mac OS X using friends

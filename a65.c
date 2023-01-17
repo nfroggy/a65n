@@ -274,7 +274,7 @@ static void normal_op() {
 
 	case STXY:  
 		if ((argattr & (opcode == 0x86 ? ~ARGY : ~ARGX)) != ARGNUM) { 
-			error ('A');
+			error('A');
 			return;
 		}
 		if (argattr & (ARGX + ARGY)) {

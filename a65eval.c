@@ -102,6 +102,11 @@ unsigned do_args() {
 		argattr = ARGIMM + ARGNUM;
 		return expr();
 
+	case ABS:
+		argattr = ARGNUM;
+		forceabs = TRUE;
+		return expr();
+
 	case SEP:   
 		u = 0;  goto have_number;
 
@@ -172,6 +177,7 @@ static unsigned eval(unsigned pre) {
 	for (;;) {
 		u = op = lex()->valu;
 		switch (token.attr & TYPE) {
+		case ABS:
 		case REG:
 		case IMM:   exp_error('S');  break;
 
@@ -183,7 +189,6 @@ static unsigned eval(unsigned pre) {
 			u = (op == '*' ? pc : eval((op == '+' || op == '-') ? (unsigned)UOP1 : token.attr & PREC));
 			switch (op) {
 				case '-':   u = word(~u + 1);	break;
-				case ABS:	forceabs = TRUE;	break;
 				case NOT:   u ^= 0xffff;		break;
 				case HIGH:  u = high(u);		break;
 				case LOW:   u = low(u);			break;
@@ -320,6 +325,9 @@ num:		    pops(token.sval);
 	case '#':   token.attr = IMM;
 				break;
 
+	case '!':	token.attr = ABS;
+				break;
+
 	case '(':   token.attr = UNARY + LPREN + OPR;
 				goto opr1;
 
@@ -392,8 +400,7 @@ static void make_number(unsigned base) {
 }
 
 int isalph(char c) {
-    return (c >= 'A' && c <= '~') || c == '!' ||
-		c == '&' || c == '.' || c == ':' || c == '?';
+    return (c >= 'A' && c <= '~') || c == '&' || c == '.' || c == ':' || c == '?';
 }
 
 static int isnum(char c) {
