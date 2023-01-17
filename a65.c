@@ -62,7 +62,7 @@ parse the source line and convert it into the object bytes that it represents.
 
 char errcode, line[MAXLINE + 1], title[MAXLINE];
 int pass = 0;
-int eject, filesp, forwd, listhex;
+int eject, filesp, forwd, forceabs, listhex;
 unsigned address, argattr, bytes, errors, listleft, obj[MAXLINE], pagelen, pc;
 FILE *filestk[FILES], *source;
 TOKEN token;
@@ -103,7 +103,7 @@ void main(int argc, char **argv) {
 					if (!--argc) { warning(NOHEX);  break; }
 					else ++argv;
 				}
-				hopen(*argv);
+				bopen(*argv);
 				break;
 
 			default:
@@ -130,12 +130,12 @@ void main(int argc, char **argv) {
 			pc = word(pc + bytes);
 			if (pass == 2) {
 				lputs();
-				for (o = obj; bytes--; hputc(*o++));
+				for (o = obj; bytes--; bputc(*o++));
 			}
 		}
     }
 
-    fclose(filestk[0]);  lclose();  hclose();
+    fclose(filestk[0]);  lclose();  bclose();
 
     if (errors) printf("%d Error(s)\n",errors);
     else printf("No Errors\n");
@@ -157,7 +157,7 @@ static OPCODE *opcod;
 static void asm_line() {
     SCRATCH int i;
 
-    address = pc;  bytes = 0;  eject = forwd = listhex = FALSE;
+    address = pc;  bytes = 0;  eject = forwd = forceabs = listhex = FALSE;
     for (i = 0; i < BIGINST; obj[i++] = NOP);
 
     label[0] = '\0';
@@ -317,7 +317,7 @@ do_inc_op:
 do_indexed_x:
 		if (argattr & ARGX) opcode += 0x10;
 do_zero_page:
-		if (!forwd && operand <= 0x00ff) bytes = 2;
+		if (!forceabs && !forwd && (operand <= 0x00ff)) bytes = 2;
 		else opcode += 0x08;
 		break;
     }
@@ -385,7 +385,7 @@ static void pseudo_op() {
 		else {
 			done = eject = TRUE;
 			if (pass == 2 && (lex() -> attr & TYPE) != EOL) {
-				unlex();  hseek(address = expr());
+				unlex();  bseek(address = expr());
 			}
 			if (ifsp) error('I');
 		}
@@ -446,7 +446,7 @@ static void pseudo_op() {
 		if (forwd) error('P');
 		else {
 			pc = address = u;
-			if (pass == 2) hseek(pc);
+			if (pass == 2) bseek(pc);
 		}
 		do_label();
 		break;
@@ -468,7 +468,7 @@ static void pseudo_op() {
 		if (forwd) error('P');
 		else {
 			pc = u;
-			if (pass == 2) hseek(pc);
+			if (pass == 2) bseek(pc);
 		}
 		break;
 

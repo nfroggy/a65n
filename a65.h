@@ -189,18 +189,21 @@ typedef struct {
 /*  Lexical analyzer (A65EVAL.C) operator token values (unlisted ones	*/
 /*  use ASCII characters):						*/
 
-#define	AND		0
-#define	GE		1
-#define	HIGH	2
-#define	LE		3
-#define	LOW		4
-#define	MOD		5
-#define	NE		6
-#define	NOT		7
-#define	OR		8
-#define	SHR		9
-#define	SHL		10
-#define	XOR		11
+typedef enum {
+	ABS = 0,
+	AND,
+	GE,
+	HIGH,
+	LE,
+	LOW,
+	MOD,
+	NE,
+	NOT,
+	OR,
+	SHR,
+	SHL,
+	XOR,
+} LEX_OP;
 
 /*  Lexical analyzer (A65EVAL.C) operator precedence values:		*/
 
@@ -241,6 +244,6 @@ typedef struct {
 
 /*  Utility package (A65UTIL.C) hex file output routines:		*/
 
-#define	HEXSIZE		32
+#define	HEXSIZE		8192
 
 #endif

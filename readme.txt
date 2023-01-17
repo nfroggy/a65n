@@ -29,9 +29,10 @@ your workflow.
 - Change "FCB", "FCC", "FDB" to "DB", "DS", "DW" - done
 - Change the syntax so "DB" accepts string(s) as arguments - done
 - Change the syntax so labels can have colons after them - done
-- Give each .c file its own header file
+- Give each .c file its own header file - done
 - Change the assembler to output binary files instead of Intel HEX
 - Allow for forcing loads/stores to not be optimized for zero page
+- Add a "MSG" statement that prints out arbitrary strings and symbols
 - Print the error messages to stdout instead of the assembler listing
 - Add a makefile for our GNU/Linux and Mac OS X using friends
 - Update A65.DOC with the new changes

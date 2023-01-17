@@ -54,6 +54,7 @@ This module contains the following utility packages:
 */
 
 #include <ctype.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -80,8 +81,7 @@ static OPCODE *bsearchtbl(OPCODE *lo, OPCODE *hi, char *nam);
 static int ustrcmp(char *s, char *t);
 static void list_sym(SYMBOL *sp);
 static void check_page();
-static void record(unsigned typ);
-static void putb(unsigned b);
+static void record();
 
 /*  Add new symbol to symbol table.  Returns pointer to symbol even if	*/
 /*  the symbol already exists.  If there's not enough memory to store	*/
@@ -206,6 +206,7 @@ OPCODE *find_code(char *nam) {
 OPCODE *find_operator(char *nam) {
     static OPCODE oprtbl[] = {
 		{ REG,						'A',		"A"		},
+		{ UNARY + UOP3 + OPR,		ABS,		"ABS"	},
 		{ BINARY + LOG1  + OPR,		AND,		"AND"	},
 		{ BINARY + RELAT + OPR,		'=',		"EQ"	},
 		{ BINARY + RELAT + OPR,		GE,			"GE"	},
@@ -340,35 +341,38 @@ static void check_page() {
 /*  forming without the	main routine having to fool with it.		*/
 
 static FILE *hex = NULL;
+static FILE *outfile = NULL;
 static unsigned cnt = 0;
 static unsigned addr = 0;
 static unsigned sum = 0;
-static unsigned buf[HEXSIZE];
+static uint8_t buf[HEXSIZE];
 
 /*  Hex file open routine.  If a hex file is already open, a warning	*/
 /*  occurs.  If the hex file doesn't open correctly, a fatal error	*/
 /*  occurs.  If no hex file is open, all calls to hputc(), hseek(), and	*/
 /*  hclose() have no effect.						*/
 
-void hopen(char *nam) {
-    FILE *fopen();
-    void fatal_error(), warning();
-
-    if (hex) warning(TWOHEX);
-    else if (!(hex = fopen(nam,"w"))) fatal_error(HEXOPEN);
-    return;
+void bopen(char *filename) {
+	if (outfile) {
+		warning(TWOHEX);
+	}
+	else {
+		outfile = fopen(filename, "wb");
+		if (!outfile) {
+			fatal_error(HEXOPEN);
+		}
+	}
 }
 
 /*  Hex file write routine.  The data byte is appended to the current	*/
 /*  record.  If the record fills up, it gets written to disk.  If the	*/
 /*  disk fills up, a fatal error occurs.				*/
 
-void hputc(unsigned c) {
-    if (hex) {
+void bputc(unsigned c) {
+	if (outfile) {
 		buf[cnt++] = c;
-		if (cnt == HEXSIZE) record(0);
-    }
-    return;
+		if (cnt == HEXSIZE) record();
+	}
 }
 
 /*  Hex file address set routine.  The specified address becomes the	*/
@@ -376,45 +380,48 @@ void hputc(unsigned c) {
 /*  it gets written to disk.  If the disk fills up, a fatal error	*/
 /*  occurs.								*/
 
-void hseek(unsigned a) {
-    if (hex) {
-		if (cnt) record(0);
-		addr = a;
-    }
-    return;
+void bseek(unsigned a) {
+	unsigned cursor = addr + cnt;
+	unsigned difference;
+	int i;
+
+	if (outfile) {
+		/* initial ORG statement */
+		if (cursor == 0) {
+			addr = a;
+		}
+		/* don't allow seeking backwards */
+		else if (cursor > a) {
+			fatal_error("Invalid ORG statement");
+		}
+		/* pad the file to make up the difference */
+		else {
+			difference = a - cursor;
+			for (i = 0; i < difference; i++) {
+				bputc(0);
+			}
+		}
+	}
 }
 
 /*  Hex file close routine.  Any open record is written to disk, the	*/
 /*  EOF record is added, and file is closed.  If the disk fills up, a	*/
 /*  fatal error occurs.							*/
 
-void hclose() {
-    if (hex) {
-		if (cnt) record(0);
-		record(1);
-		if (fclose(hex) == EOF) fatal_error(DSKFULL);
-    }
-    return;
+void bclose() {
+	if (outfile) {
+		if (cnt) record();
+		fclose(outfile);
+	}
 }
 
-static void record(unsigned typ) {
-    SCRATCH unsigned i;
-    putc(':',hex);  putb(cnt);  putb(high(addr));
-    putb(low(addr));  putb(typ);
-    for (i = 0; i < cnt; ++i) putb(buf[i]);
-    putb(low(~sum + 1));  putc('\n',hex);
+static void record() {
+	if (fwrite(buf, 1, cnt, outfile) != cnt) {
+		fatal_error(DSKFULL);
+	}
 
-    addr += cnt;  cnt = 0;
-
-    if (ferror(hex)) fatal_error(DSKFULL);
-    return;
-}
-
-static void putb(unsigned b) {
-    static char digit[] = "0123456789ABCDEF";
-
-    putc(digit[b >> 4],hex);  putc(digit[b & 0x0f],hex);
-    sum += b;  return;
+	addr += cnt;
+	cnt = 0;
 }
 
 /*  Error handler routine.  If the current error code is non-blank,	*/

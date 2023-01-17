@@ -114,14 +114,14 @@ void lclose();
 /*  occurs.  If no hex file is open, all calls to hputc(), hseek(), and	*/
 /*  hclose() have no effect.											*/
 
-void hopen(char *nam);
+void bopen(char *nam);
 
 
 /*  Hex file write routine.  The data byte is appended to the current	*/
 /*  record.  If the record fills up, it gets written to disk.  If the	*/
 /*  disk fills up, a fatal error occurs.								*/
 
-void hputc(unsigned c);
+void bputc(unsigned c);
 
 
 /*  Hex file address set routine.  The specified address becomes the	*/
@@ -129,14 +129,14 @@ void hputc(unsigned c);
 /*  it gets written to disk.  If the disk fills up, a fatal error		*/
 /*  occurs.																*/
 
-void hseek(unsigned a);
+void bseek(unsigned a);
 
 
 /*  Hex file close routine.  Any open record is written to disk, the	*/
 /*  EOF record is added, and file is closed.  If the disk fills up, a	*/
 /*  fatal error occurs.													*/
 
-void hclose();
+void bclose();
 
 
 /*  Error handler routine.  If the current error code is non-blank,		*/

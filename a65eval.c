@@ -56,7 +56,7 @@ arithmetic expressions.
 /*  Get access to global mailboxes defined in A65.C:			*/
 
 extern char line[];
-extern int filesp, forwd, pass;
+extern int filesp, forwd, forceabs, pass;
 extern unsigned argattr, pc;
 extern FILE *filestk[], *source;
 extern TOKEN token;
@@ -123,9 +123,8 @@ unsigned do_args() {
 				argattr = (ARGIND + ARGNUM);  trash();
 				if ((c = popc()) == '\n') return u;
 				if (c == ',') {
-					if (lex() -> attr & TYPE != REG
-					|| token.valu != 'Y')
-					exp_error('S');
+					if (lex() -> attr & TYPE != REG || token.valu != 'Y')
+						exp_error('S');
 					else argattr += ARGY;
 					return bad ? 0 : u;
 				}
@@ -181,10 +180,11 @@ static unsigned eval(unsigned pre) {
 			if (!(token.attr & UNARY)) { exp_error('E');  break; }
 			u = (op == '*' ? pc : eval((op == '+' || op == '-') ? (unsigned)UOP1 : token.attr & PREC));
 			switch (op) {
-				case '-':   u = word(~u + 1);  break;
-				case NOT:   u ^= 0xffff;  break;
-				case HIGH:  u = high(u);  break;
-				case LOW:   u = low(u);  break;
+				case '-':   u = word(~u + 1);	break;
+				case ABS:	forceabs = TRUE;	break;
+				case NOT:   u ^= 0xffff;		break;
+				case HIGH:  u = high(u);		break;
+				case LOW:   u = low(u);			break;
 			}
 
 		case VAL:
