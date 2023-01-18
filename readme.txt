@@ -33,8 +33,8 @@ your workflow.
 - Change the assembler to output binary files instead of Intel HEX - done
 - Allow for forcing loads/stores to not be optimized for zero page - done (! operator)
 - Add a "MSG" statement that prints out arbitrary strings and symbols
-- Print the error messages to stdout instead of the assembler listing
-- Add a makefile for our GNU/Linux and Mac OS X using friends
+- Print the error messages to stdout instead of the assembler listing - done
+- Add a makefile for our GNU/Linux and Mac OS X using friends - done
 - Update A65.DOC with the new changes
 
 =====Future goals=====

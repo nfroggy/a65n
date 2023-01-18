@@ -59,6 +59,26 @@ utility packages:
 
 #include "a65.h"
 
+/* Error code descriptions */
+#define ERR_STATEMENT	"Illegal or missing statement"
+#define ERR_PAREN		"Parenthesis imbalance"
+#define ERR_QUOTE		"Missing quotation mark"
+#define ERR_A			"Illegal addressing mode"
+#define ERR_B			"Branch target too distant"
+#define ERR_D			"Illegal digit"
+#define ERR_E			"Illegal expression"
+#define ERR_I			"IF-ENDI imbalance"
+#define ERR_L			"Illegal label"
+#define ERR_M			"Multiply defined label"
+#define ERR_O			"Illegal opcode"
+#define ERR_P			"Phasing error"
+#define ERR_R			"Illegal register"
+#define ERR_S			"Illegal syntax"
+#define ERR_T			"Too many arguments"
+#define ERR_U			"Undefined label"
+#define ERR_V			"Illegal value"
+#define ERR_UNKNOWN		"Unknown error"
+
 /*  Add new symbol to symbol table.  Returns pointer to symbol even if	*/
 /*  the symbol already exists.  If there's not enough memory to store	*/
 /*  the new symbol, a fatal error occurs.								*/

@@ -67,8 +67,9 @@ This module contains the following utility packages:
 /*  Get access to global mailboxes defined in A65.C:			*/
 
 extern char errcode, line[], title[];
-extern int eject, listhex;
+extern int eject, filesp, listhex, pass;
 extern unsigned address, bytes, errors, listleft, obj[], pagelen;
+extern FILE_INFO filestk[];
 
 /*  The symbol table is a binary tree of variable-length blocks drawn	*/
 /*  from the heap with the calloc() function.  The root pointer lives	*/
@@ -423,7 +424,36 @@ static void record() {
 /*  is adjusted.							*/
 
 void error(char code) {
-    if (errcode == ' ') { errcode = code;  ++errors; }
+	char *description;
+
+    if (errcode == ' ') {
+		errcode = code;
+		++errors;
+		if (pass == 2) {
+			switch (code) {
+			case '*':	description = ERR_STATEMENT;	break;
+			case '(':	description = ERR_PAREN;		break;
+			case '"':	description = ERR_QUOTE;		break;
+			case 'A':	description = ERR_A;			break;
+			case 'B':	description = ERR_B;			break;
+			case 'D':	description = ERR_D;			break;
+			case 'E':	description = ERR_E;			break;
+			case 'I':	description = ERR_I;			break;
+			case 'L':	description = ERR_L;			break;
+			case 'M':	description = ERR_M;			break;
+			case 'O':	description = ERR_O;			break;
+			case 'P':	description = ERR_P;			break;
+			case 'R':	description = ERR_R;			break;
+			case 'S':	description = ERR_S;			break;
+			case 'T':	description = ERR_T;			break;
+			case 'U':	description = ERR_U;			break;
+			case 'V':	description = ERR_V;			break;
+			default:	description = ERR_UNKNOWN;		break;
+			}
+
+			printf("%s:%d: %c -- %s\n", filestk[filesp].filename, filestk[filesp].linenum, code, description);
+		}
+	}
     return;
 }
 

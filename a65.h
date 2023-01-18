@@ -148,6 +148,13 @@ typedef enum {
 #define	LDXY		9
 #define	INCOP		10
 
+/* Line assembler (a65.c) file struct */
+typedef struct {
+	FILE *fp;
+	char filename[MAXLINE];
+	int linenum;
+} FILE_INFO;
+
 /*  Opcode argument field parser (A65EVAL.C) attribute bit masks:	*/
 
 #define	ARGA		040	/*  A register specified.		*/

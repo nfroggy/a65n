@@ -60,7 +60,8 @@ arithmetic expressions.
 extern char line[];
 extern int filesp, forwd, forceabs, pass;
 extern unsigned argattr, pc;
-extern FILE *filestk[], *source;
+extern FILE_INFO filestk[];
+extern FILE *source;
 extern TOKEN token;
 
 /* Static function definitions: */
@@ -481,13 +482,14 @@ void pushc(char c) {
 /*  EOF	has been reached on the main source file, zero otherwise.	*/
 
 int newline() {
+	filestk[filesp].linenum++;
     oldc = '\0';  lptr = line;
     oldt = eol = FALSE;
     while (feof(source)) {
 		if (ferror(source)) fatal_error(ASMREAD);
 		if (filesp) {
 			fclose(source);
-			source = filestk[--filesp];
+			source = filestk[--filesp].fp;
 		}
 		else return TRUE;
     }

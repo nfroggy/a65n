@@ -64,7 +64,7 @@ char errcode, line[MAXLINE + 1], title[MAXLINE];
 int pass = 0;
 int eject, filesp, forwd, forceabs, listhex;
 unsigned address, argattr, bytes, errors, listleft, obj[MAXLINE], pagelen, pc;
-FILE *filestk[FILES], *source;
+FILE_INFO filestk[FILES], *source;
 TOKEN token;
 
 /* Static function definitions: */
@@ -110,13 +110,21 @@ int main(int argc, char **argv) {
 				warning(BADOPT);
 			}
 		}
-		else if (filestk[0]) warning(TWOASM);
-		else if (!(filestk[0] = fopen(*argv,"r"))) fatal_error(ASMOPEN);
+		else if (filestk[0].fp) warning(TWOASM);
+		else {
+			filestk[0].fp = fopen(*argv, "r");
+			if (!filestk[0].fp) {
+				fatal_error(ASMOPEN);
+			}
+			strcpy(filestk[0].filename, *argv);
+			filestk[0].linenum = 1;
+		}
     }
-    if (!filestk[0]) fatal_error(NOASM);
+    if (!filestk[0].fp) fatal_error(NOASM);
 
     while (++pass < 3) {
-		fseek(source = filestk[0],0L,0);  done = off = FALSE;
+		fseek(source = filestk[0].fp,0L,0);  done = off = FALSE;
+		filestk[0].linenum = 1;
 		errors = filesp = ifsp = pagelen = pc = 0;  title[0] = '\0';
 		while (!done) {
 			errcode = ' ';
@@ -135,7 +143,7 @@ int main(int argc, char **argv) {
 		}
     }
 
-    fclose(filestk[0]);  lclose();  bclose();
+    fclose(filestk[0].fp);  lclose();  bclose();
 
     if (errors) printf("%d Error(s)\n",errors);
     else printf("No Errors\n");
@@ -192,7 +200,7 @@ static void asm_line() {
 		else normal_op();
 		while ((i = popc()) != '\n') if (i != ' ') error('T');
     }
-    source = filestk[filesp];
+    source = filestk[filesp].fp;
     return;
 }
 
@@ -434,8 +442,13 @@ static void pseudo_op() {
 		listhex = FALSE;  do_label();
 		if ((lex() -> attr & TYPE) == STR) {
 			if (++filesp == FILES) fatal_error(FLOFLOW);
-			if (!(filestk[filesp] = fopen(token.sval,"r"))) {
-				--filesp;  error('V');
+			filestk[filesp].fp = fopen(token.sval, "r");
+			if (!filestk[filesp].fp) {
+				--filesp; error('V');
+			}
+			else {
+				strcpy(filestk[filesp].filename, token.sval);
+				filestk[filesp].linenum = 0;
 			}
 		}
 		else error('S');
