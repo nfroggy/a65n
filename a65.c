@@ -85,7 +85,8 @@ int main(int argc, char **argv) {
     SCRATCH unsigned *o;
 
     printf("6502 Cross-Assembler (Portable) Ver 0.2n\n");
-    printf("Copyright (c) 1986 William C. Colley, III\n\n");
+    printf("Copyright (c) 1986 William C. Colley, III\n");
+	printf("Modifications by Nathan Misner\n\n");
 
     while (--argc > 0) {
 		if (**++argv == '-') {
@@ -452,6 +453,24 @@ static void pseudo_op() {
 			}
 		}
 		else error('S');
+		break;
+
+	case MSG:
+		do_label();
+		if (pass == 2) {
+			do {
+				if ((lex()->attr & TYPE) == STR) {
+					fputs(token.sval, stdout);
+					if ((lex()->attr & TYPE) != SEP) unlex();
+				}
+				else {
+					unlex();
+					u = expr();
+					printf("%d", u);
+				}
+			} while ((token.attr & TYPE) == SEP);
+			putchar('\n');
+		}
 		break;
 
 	case ORG:   

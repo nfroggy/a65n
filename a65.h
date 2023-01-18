@@ -127,6 +127,7 @@ typedef enum {
 	EQU,
 	IF,
 	INCL,
+	MSG,
 	ORG,
 	PAGE,
 	RMB,

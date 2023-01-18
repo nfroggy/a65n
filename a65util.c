@@ -165,6 +165,7 @@ OPCODE *find_code(char *nam) {
 		{ LDXY,				0xa0,	"LDY"	},
 		{ LOGOP,			0x46,	"LSR"	},
 		{ INHOP,			0x4a,	"LSRA"	},
+		{ PSEUDO,			MSG,	"MSG"	},
 		{ INHOP,			0xea,	"NOP"	},
 		{ TWOOP,			0x01,	"ORA"	},
 		{ PSEUDO,			ORG,	"ORG"	},
