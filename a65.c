@@ -49,7 +49,8 @@ char errcode, line[MAXLINE + 1], title[MAXLINE];
 int pass = 0;
 int eject, filesp, forwd, forceabs, listhex;
 unsigned address, argattr, bytes, errors, listleft, obj[MAXLINE], pagelen, pc;
-FILE_INFO filestk[FILES], *source;
+FILE_INFO filestk[FILES];
+FILE *source;
 TOKEN token;
 
 /* Static function definitions: */
@@ -200,7 +201,7 @@ static void do_label() {
     if (label[0]) {
 		listhex = TRUE;
 
-		// strip off the trailing colon if it exists
+		/* strip off the trailing colon if it exists */
 		ch = label;
 		while (*ch) {
 			if ((ch[0] == ':') && (ch[1] == '\0')) {
@@ -210,14 +211,14 @@ static void do_label() {
 		}
 
 		if (pass == 1) {
-			// add the label to the symbol tree
+			/* add the label to the symbol tree */
 			if (!((l = new_symbol(label)) -> attr)) {
 				l -> attr = FORWD + VAL;
 				l -> valu = pc;
 			}
 		}
 		else {
-			if (l = find_symbol(label)) {
+			if ((l = find_symbol(label))) {
 				l -> attr = VAL;
 				if (l -> valu != pc) error('M');
 			}
@@ -400,7 +401,7 @@ static void pseudo_op() {
 				}
 			}
 			else {
-				if (l = find_symbol(label)) {
+				if ((l = find_symbol(label))) {
 					l -> attr = VAL;
 					address = expr();
 					if (forwd) error('P');
@@ -416,7 +417,7 @@ static void pseudo_op() {
 		if (++ifsp == IFDEPTH) fatal_error(IFOFLOW);
 		address = expr();
 		if (forwd) { error('P');  address = TRUE; }
-		if (off) { listhex = FALSE;  ifstack[ifsp] = NULL; }
+		if (off) { listhex = FALSE;  ifstack[ifsp] = 0; }
 		else {
 			ifstack[ifsp] = address ? ON : OFF;
 			if (!address) off = TRUE;
@@ -498,7 +499,7 @@ static void pseudo_op() {
 				}
 			}
 			else {
-				if (l = find_symbol(label)) {
+				if ((l = find_symbol(label))) {
 					address = expr();
 					if (forwd) error('P');
 					else if (l -> attr & SOFT) {

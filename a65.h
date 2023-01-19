@@ -147,7 +147,7 @@ typedef enum {
 	IMM,			/* immediate designator */
 	REG,			/* register designator */
 	ABS,			/* force absolute addressing */
-};
+} LEX_ATTR;
 
 /*  Lexical analyzer (A65EVAL.C) token attribute word flag masks:	*/
 

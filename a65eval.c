@@ -59,7 +59,7 @@ unsigned do_args() {
 		break;
 
 	case EOL:   
-		argattr = NULL;  
+		argattr = 0;  
 		break;
 
 	case IMM:
@@ -94,7 +94,7 @@ unsigned do_args() {
 				argattr = (ARGIND + ARGNUM);  trash();
 				if ((c = popc()) == '\n') return u;
 				if (c == ',') {
-					if (lex() -> attr & TYPE != REG || token.valu != 'Y')
+					if (((lex() -> attr) & TYPE) != REG || token.valu != 'Y')
 						exp_error('S');
 					else argattr += ARGY;
 					return bad ? 0 : u;
@@ -247,13 +247,13 @@ TOKEN *lex() {
 	trash();
 	if (isalph(c = popc())) {
 		pushc(c);  pops(token.sval);
-		if (o = find_operator(token.sval)) {
+		if ((o = find_operator(token.sval))) {
 			token.attr = o -> attr;
 			token.valu = o -> valu;
 		}
 		else {
 			token.attr = VAL;  token.valu = 0;
-			if (s = find_symbol(token.sval)) {
+			if ((s = find_symbol(token.sval))) {
 				token.valu = s -> valu;
 				if (pass == 2 && s -> attr & FORWD) forwd = TRUE;
 			}

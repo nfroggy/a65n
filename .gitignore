@@ -13,6 +13,7 @@ variables.asm
 *.o
 *.d
 a65
+*.swp
 
 # User-specific files
 *.rsuser

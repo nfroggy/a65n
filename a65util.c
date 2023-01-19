@@ -281,7 +281,7 @@ static void list_sym(SYMBOL *sp) {
     if (sp) {
 		list_sym(sp -> left);
 		fprintf(list,"%04x  %-10s",sp -> valu,sp -> sname);
-		if (col = ++col % SYMCOLS) fprintf(list,"    ");
+		if ((++col) % SYMCOLS) fprintf(list,"    ");
 		else {
 			fprintf(list,"\n");
 			if (sp -> right) check_page();
@@ -307,7 +307,6 @@ static void check_page() {
 static FILE *outfile = NULL;
 static unsigned cnt = 0;
 static unsigned addr = 0;
-static unsigned sum = 0;
 static uint8_t buf[HEXSIZE];
 
 /*  Binary file open routine.  If the file is already open, a warning	*/
