@@ -389,7 +389,7 @@ void bseek(unsigned a) {
 		}
 		/* don't allow seeking backwards */
 		else if (cursor > a) {
-			error('S');
+			error('V');
 		}
 		/* pad the file to make up the difference */
 		else {
@@ -452,7 +452,7 @@ void error(char code) {
 			default:	description = ERR_UNKNOWN;		break;
 			}
 
-			printf("%s:%d: %c -- %s\n", filestk[filesp].filename, filestk[filesp].linenum, code, description);
+			fprintf(stderr, "%s:%d: %c -- %s\n", filestk[filesp].filename, filestk[filesp].linenum, code, description);
 		}
 	}
     return;

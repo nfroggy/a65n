@@ -14,8 +14,7 @@ your workflow.
   "dialects" like all the popular assemblers do
 - It's an absolute assembler, so no linking
 - No macro support
-- I'm like 90% sure that it won't like Unicode characters (but who knows, it
-  might...)
+- It clears the upper bit when reading input files, so no UTF-8 support
 
 =====Why to use this assembler=====
 - The code is well laid out and easy to understand and modify in case you want
