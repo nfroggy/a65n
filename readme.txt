@@ -34,22 +34,8 @@ your workflow.
 - Add a "MSG" statement that prints out arbitrary strings and symbols - done
 - Print the error messages to stdout instead of the assembler listing - done
 - Add a makefile for our GNU/Linux and Mac OS X using friends - done
-- Update A65.DOC with the new changes
+- Update A65.DOC with the new changes - done (see a65.html)
 
 =====Future goals=====
 - Add a "BASE" statement that changes the PC but not the output position in
   the file
-
-=====License=====
-
-Copyright (c) 1986 William C. Colley, III
-
-This package may be used for any commercial or non-commercial purpose.  It may
-be copied and distributed freely provided that any fee charged by the
-distributor of the copy does not exceed the sum of:
-1) the cost of the media the copy is written on,
-2) any required costs of shipping the copy, and
-3) a nominal handling fee.  
-Any other distribution requires the written permission of the author.  Also, the
-author's copyright notices shall not be removed from the program source, the
-program object, or the program documentation.
