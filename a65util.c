@@ -1,44 +1,7 @@
 /*
-	HEADER:		CUG219;
-	TITLE:		6502 Cross-Assembler (Portable);
-	FILENAME:	A65UTIL.C;
-	VERSION:	0.1;
-	DATE:		08/27/1988;
-
-	DESCRIPTION:	"This program lets you use your computer to assemble
-			code for the MOS Technology 6502 microprocessors.  The
-			program is written in portable C rather than BDS C.
-			All assembler features are supported except relocation
-			linkage, and macros.";
-
-	KEYWORDS:	Software Development, Assemblers, Cross-Assemblers,
-			MOS Technology, 6502;
-
-	SYSTEM:		CP/M-80, CP/M-86, HP-UX, MSDOS, PCDOS, QNIX;
-	COMPILERS:	Aztec C86, Aztec CII, CI-C86, Eco-C, Eco-C88, HP-UX,
-			Lattice C, Microsoft C,	QNIX C;
-
-	WARNINGS:	"This program is written in as portable C as possible.
-			A port to BDS C would be extremely difficult, but see
-			volume CUG113.  A port to Toolworks C is untried."
-
-	AUTHORS:	William C. Colley III;
-*/
-
-/*
 		      6502 Cross-Assembler in Portable C
 
 		   Copyright (c) 1986 William C. Colley, III
-
-Revision History:
-
-Ver	Date		Description
-
-0.0	NOV 1986	Derived from my 6800/6801 cross-assembler.  WCC3.
-
-0.1	AUG 1988	Fixed a bug in the command line parser that puts it
-			into a VERY long loop if the user types a command line
-			like "A65 FILE.ASM -L".  WCC3 per Alex Cameron.
 
 This module contains the following utility packages:
 
