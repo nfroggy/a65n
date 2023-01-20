@@ -453,6 +453,7 @@ int newline() {
 		if (filesp) {
 			fclose(source);
 			source = filestk[--filesp].fp;
+			filestk[filesp].linenum++;
 		}
 		else return TRUE;
     }

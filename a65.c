@@ -103,14 +103,14 @@ int main(int argc, char **argv) {
 				fatal_error(ASMOPEN);
 			}
 			strcpy(filestk[0].filename, *argv);
-			filestk[0].linenum = 1;
+			filestk[0].linenum = 0;
 		}
     }
     if (!filestk[0].fp) fatal_error(NOASM);
 
     while (++pass < 3) {
 		fseek(source = filestk[0].fp,0L,0);  done = off = FALSE;
-		filestk[0].linenum = 1;
+		filestk[0].linenum = 0;
 		errors = filesp = ifsp = pagelen = pc = 0;  title[0] = '\0';
 		while (!done) {
 			errcode = ' ';
