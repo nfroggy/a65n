@@ -77,6 +77,14 @@ int main(int argc, char **argv) {
     while (--argc > 0) {
 		if (**++argv == '-') {
 			switch (toupper(*++*argv)) {
+			case 'E':
+				if (!*++ * argv) {
+					if (!--argc) { warning(NOEXP);  break; }
+					else ++argv;
+				}
+				eopen(*argv);
+				break;
+
 			case 'L':   
 				if (!*++*argv) {
 					if (!--argc) { warning(NOLST);  break; }
@@ -130,7 +138,7 @@ int main(int argc, char **argv) {
 		}
     }
 
-    fclose(filestk[0].fp);  lclose();  bclose();
+	fclose(filestk[0].fp);  eclose();  lclose();  bclose();
 
     if (errors) printf("%d Error(s)\n",errors);
     else printf("No Errors\n");
@@ -414,6 +422,19 @@ static void pseudo_op() {
 			}
 		}
 		else error('L');
+		break;
+
+	case EXP:	/* label export */
+		do_label();
+		if (pass == 2) {
+			if ((lex()->attr & TYPE) == VAL) {
+				if ((l = find_symbol(token.sval))) {
+					eputs(l);
+				}
+				else error('V');
+			}
+		}
+
 		break;
 
 	case IF:   

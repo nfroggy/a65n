@@ -69,6 +69,23 @@ OPCODE *find_code(char *nam);
 OPCODE *find_operator(char *nam);
 
 
+/*  Export file open routine.  If an export file is already open, a		*/
+/*  warning occurs.  If the export file doesn't open correctly, a		*/
+/*  fatal error occurs.  If no export file is open, all calls to		*/
+/*  eputs() and eclose() will produce fatal errors.						*/
+void eopen(char *nam);
+
+
+/*  Export file line output routine.  This routine writes the value		*/
+/*  of a single symbol to the currently open export file. If the export	*/
+/*  file is not open, or the disk is full, a fatal error occurs.		*/
+void eputs(SYMBOL *sym);
+
+
+/*  Export file close routine. */
+void eclose();
+
+
 /*  Listing file open routine.  If a listing file is already open, a	*/
 /*  warning occurs.  If the listing file doesn't open correctly, a		*/
 /*  fatal error occurs.  If no listing file is open, all calls to		*/

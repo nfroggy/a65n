@@ -12,6 +12,7 @@ variables.asm
 # build artifacts
 *.o
 *.d
+*.exp
 a65
 *.swp
 
