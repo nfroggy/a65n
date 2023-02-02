@@ -48,7 +48,7 @@ parse the source line and convert it into the object bytes that it represents.
 char errcode, line[MAXLINE + 1], title[MAXLINE];
 int pass = 0;
 int eject, filesp, forwd, forceabs, listhex;
-unsigned address, argattr, bytes, errors, listleft, obj[MAXLINE], pagelen, pc;
+unsigned address, argattr, bytes, errors, listleft, obj[65536], pagelen, pc;
 FILE_INFO filestk[FILES];
 FILE *source;
 TOKEN token;
