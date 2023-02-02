@@ -81,7 +81,9 @@ all modules of the cross-assembler.
 /*  Line assembler (A65.C) pseudo-op opcode token values:		*/
 
 typedef enum {
-	DB = 1,
+	ALIGN = 1,
+	BASE,
+	DB,
 	DS,
 	DW,
 	ELSE,
@@ -89,6 +91,7 @@ typedef enum {
 	ENDI,
 	EQU,
 	IF,
+	INCB,
 	INCL,
 	MSG,
 	ORG,
@@ -212,7 +215,7 @@ typedef struct _symbol SYMBOL;
 typedef struct {
     unsigned attr;
     unsigned valu;
-    char oname[5];
+    char oname[6];
 } OPCODE;
 
 /*  Utility package (A65UTIL.C) hex file output routines:		*/

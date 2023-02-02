@@ -70,7 +70,8 @@ static int done, ifsp, off;
 int main(int argc, char **argv) {
     SCRATCH unsigned *o;
 
-    printf("6502 Cross-Assembler (Portable) Ver 0.2n\n");
+    /* printf("6502 Cross-Assembler (Portable) Ver 0.2n\n"); */
+	printf("6502 Cross-Assembler (Portable), built %s\n", __DATE__);
     printf("Copyright (c) 1986 William C. Colley, III\n\n");
 
     while (--argc > 0) {
@@ -321,8 +322,10 @@ do_zero_page:
 
 static void pseudo_op() {
     SCRATCH char *s;
-    SCRATCH unsigned *o, u;
+    SCRATCH unsigned *o, result, u;
     SCRATCH SYMBOL *l;
+	FILE *binfp;
+	size_t size;
 
     o = obj;
     switch (opcod -> valu) {
@@ -424,7 +427,25 @@ static void pseudo_op() {
 		}
 		break;
 
-	case INCL:  
+	case INCB:	/* include binary */
+		do_label();
+		if ((lex()->attr & TYPE) == STR) {
+			binfp = fopen(token.sval, "rb");
+			if (!binfp) {
+				error('V');
+			}
+			else {
+				while ((*o++ = fgetc(binfp)) != EOF) {
+					bytes++;
+				}
+				fclose(binfp);
+			}
+		}
+		else error('S');
+
+		break;
+
+	case INCL:	/* include source file */
 		listhex = FALSE;  do_label();
 		if ((lex() -> attr & TYPE) == STR) {
 			if (++filesp == FILES) fatal_error(FLOFLOW);
@@ -456,6 +477,24 @@ static void pseudo_op() {
 			} while ((token.attr & TYPE) == SEP);
 			putchar('\n');
 		}
+		break;
+
+	case ALIGN:
+		u = expr();
+		if (forwd) error('P');
+		else {
+			/* round up pc to next multiple of align val */
+			pc = address = ((pc + (u / 2)) / u) * u;
+			if (pass == 2) bseek(pc);
+		}
+		do_label();
+		break;
+
+	case BASE:
+		u = expr();
+		if (forwd) error('P');
+		else pc = address = u;
+		do_label();
 		break;
 
 	case ORG:   

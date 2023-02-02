@@ -83,11 +83,13 @@ SYMBOL *find_symbol(char *nam) {
 /*  NULL if the opcode doesn't exist.					*/
 
 OPCODE *find_code(char *nam) {
-    static OPCODE opctbl[] = {
+	static OPCODE opctbl[] = {
 		{ TWOOP,			0x61,	"ADC"	},
+		{ PSEUDO,			ALIGN,	"ALIGN"	},
 		{ TWOOP,			0x21,	"AND"	},
 		{ LOGOP,			0x06,	"ASL"	},
 		{ INHOP,			0x0a,	"ASLA"	},
+		{ PSEUDO,			BASE,	"BASE"	},
 		{ RELBR,			0x90,	"BCC"	},
 		{ RELBR,			0xb0,	"BCS"	},
 		{ RELBR,			0xf0,	"BEQ"	},
@@ -118,6 +120,7 @@ OPCODE *find_code(char *nam) {
 		{ PSEUDO,			EQU,	"EQU"	},
 		{ PSEUDO + ISIF,	IF,		"IF"	},
 		{ INCOP,			0xe6,	"INC"	},
+		{ PSEUDO,			INCB,	"INCB"	},
 		{ PSEUDO,			INCL,	"INCL"	},
 		{ INHOP,			0xe8,	"INX"	},
 		{ INHOP,			0xc8,	"INY"	},
@@ -340,7 +343,7 @@ void bputc(unsigned c) {
 /*  seek forwards in the file. Seeking backwards will cause an error.	*/
 
 void bseek(unsigned a) {
-	unsigned cursor = addr + cnt;
+	unsigned cursor = (addr + cnt) & 0xFFFF;
 	unsigned difference;
 	int i;
 
