@@ -123,10 +123,10 @@ void bopen(char *nam);
 void bputc(unsigned c);
 
 
-/*  Binary file address set routine. Note that this can only be used to */
-/*  seek forwards in the file. Seeking backwards will cause an error.	*/
+/*  Pads the output file. The len parameter is the number of bytes to	*/
+/*  pad the file by.													*/
 
-void bseek(unsigned a);
+void bpad(unsigned len);
 
 
 /*  Binary file close routine. All buffered data is written to disk,	*/

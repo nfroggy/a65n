@@ -330,7 +330,7 @@ do_zero_page:
 
 static void pseudo_op() {
     SCRATCH char *s;
-    SCRATCH unsigned *o, result, u;
+    SCRATCH unsigned count, *o, result, u;
     SCRATCH SYMBOL *l;
 	FILE *binfp;
 	size_t size;
@@ -389,9 +389,10 @@ static void pseudo_op() {
 		if (filesp) { listhex = FALSE;  error('*'); }
 		else {
 			done = eject = TRUE;
+			/*
 			if (pass == 2 && (lex() -> attr & TYPE) != EOL) {
 				unlex();  bseek(address = expr());
-			}
+			}*/
 			if (ifsp) error('I');
 		}
 		break;
@@ -504,9 +505,12 @@ static void pseudo_op() {
 		u = expr();
 		if (forwd) error('P');
 		else {
-			/* round up pc to next multiple of align val */
-			pc = address = ((pc + (u / 2)) / u) * u;
-			if (pass == 2) bseek(pc);
+			/* calculate amount to pad the file */
+			if (pc % u) u -= pc % u;
+			else u = 0;
+			if (pass == 2) bpad(u);
+			pc += u;
+			address = pc;
 		}
 		do_label();
 		break;
@@ -522,8 +526,10 @@ static void pseudo_op() {
 		u = expr();
 		if (forwd) error('P');
 		else {
+			count = u - pc;
+			/* only pad if we're not at the initial offset */
+			if ((pass == 2) && (pc != 0)) bpad(count);
 			pc = address = u;
-			if (pass == 2) bseek(pc);
 		}
 		do_label();
 		break;
@@ -541,11 +547,11 @@ static void pseudo_op() {
 
 	case RMB:   
 		do_label();
-		u = word(pc + expr());
+		u = expr();
 		if (forwd) error('P');
 		else {
 			pc = u;
-			if (pass == 2) bseek(pc);
+			if (pass == 2) bpad(u);
 		}
 		break;
 

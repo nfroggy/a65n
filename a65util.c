@@ -348,6 +348,7 @@ static void check_page() {
 static FILE *outfile = NULL;
 static unsigned cnt = 0;
 static unsigned addr = 0;
+static unsigned bbase = 0;
 static uint8_t buf[HEXSIZE];
 
 /*  Binary file open routine.  If the file is already open, a warning	*/
@@ -377,30 +378,14 @@ void bputc(unsigned c) {
 	}
 }
 
-/*  Binary file address set routine. Note that this can only be used to */
-/*  seek forwards in the file. Seeking backwards will cause an error.	*/
+/*  Pads the output file. The len parameter is the number of bytes to	*/
+/*  pad the file by.													*/
 
-void bseek(unsigned a) {
-	unsigned cursor = (addr + cnt) & 0xFFFF;
-	unsigned difference;
+void bpad(unsigned len) {
 	int i;
 
-	if (outfile) {
-		/* initial ORG statement */
-		if (cursor == 0) {
-			addr = a;
-		}
-		/* don't allow seeking backwards */
-		else if (cursor > a) {
-			error('V');
-		}
-		/* pad the file to make up the difference */
-		else {
-			difference = a - cursor;
-			for (i = 0; i < difference; i++) {
-				bputc(0);
-			}
-		}
+	for (i = 0; i < len; i++) {
+		bputc(0);
 	}
 }
 
