@@ -228,7 +228,6 @@ static void do_label() {
 		if (label[0] == '.') {
 			strcpy(labelname, lastglobal);
 			strcat(labelname, label);
-			printf("%s\n", labelname);
 		}
 		else {
 			strcpy(lastglobal, label);
