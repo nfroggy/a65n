@@ -51,7 +51,7 @@ the author.  Also, the author's copyright notices
 shall not be removed from the program source, the 
 program object, or the program documentation.</p>
 
-<h3>1.0 - How to Use the Cross-Assembler Package</h3>
+<h2>How to Use the Cross-Assembler Package</h2>
 <p>First, the question, "What does a cross-assembler do?" needs 
 to be addressed as there is considerable confusion on this point.  
 A cross-assembler is just like any other assembler except that it 
@@ -98,7 +98,7 @@ a65 test65.asm -l test65.prn -o test65.bin
 <p>The order in which the source, listing, and object files are 
 specified does not matter.  Note that no default file name extensions are supplied by the assembler as this gives rise to portability problems.</p>
 
-<h3>2.0 - Format of Cross-Assembler Source Lines</h3>
+<h2>Format of Cross-Assembler Source Lines</h2>
 <p>The source file that the cross-assembler processes into a 
 listing and an object is an ASCII text file that you can prepare 
 with whatever editor you have at hand.  The most-significant 
@@ -145,7 +145,7 @@ Some examples are in order:</p>
    ; The previous line has nothing at all.
            END                   ; This line has no argument.</code></pre>
 
-<h3>2.1 - Labels</h3>
+<h3>Labels</h3>
 <p>A label is any sequence of alphabetic or numeric characters 
 starting with an alphabetic.  The legal alphabetics are:</p>
 <pre><code>& , . ? [ \ ] ^ _  ` { | }  ~  A-Z  a-z</code></pre>
@@ -173,7 +173,7 @@ example:</p>
 L2
 L3   EQU  L2 + 1   ; L2 is not forward-referenced here.</code></pre>
 
-<h3>2.2 - Numeric Constants</h3>
+<h3>Numeric Constants</h3>
 
 <p>Numeric constants can be formed in two ways:  the Intel 
 convention or the Motorola convention.  The cross-assembler 
@@ -201,7 +201,7 @@ Thus, all of the following evaluate to 255 (decimal):</p>
 into a 16-bit word, it will be truncated on the left to make it 
 fit.  Thus, for example, $123456 is truncated to $3456.</p>
 
-<h3>2.3 - String Constants</h3>
+<h3>String Constants</h3>
 <p>A string constant is zero or more characters enclosed in 
 either single quotes (' ') or double quotes (" ").  Single quotes 
 only match single quotes, and double quotes only match double 
@@ -216,7 +216,7 @@ following examples:</p>
 "AB"                evaluates to $4142</code></pre>
 <p class="no-indent">Note that the null string "" is legal and evaluates to $0000.</p>
 
-<h3>2.4 - Expressions</h3>
+<h3>Expressions</h3>
 <p>An expression is made up of labels, numeric constants, and 
 string constants glued together with arithmetic operators, 
 logical operators, and parentheses in the usual way that 
@@ -259,13 +259,13 @@ HIGH $1234 SHL 1                   evaluates to $0024
 word ignored.  Thus:</p>
 <pre><code>32768 * 2                          evaluates to 0</code></pre>
 
-<h3>3.0 - Pseudo Opcodes</h3>
+<h2>Pseudo Opcodes</h2>
 <p>Unlike 6502 opcodes, pseudo opcodes (pseudo ops) do not 
 represent machine instructions.  They are, rather, directives to 
 the assembler.  These directives require various numbers and 
 types of arguments.  They will be listed individually below.</p>
 
-<h3>3.1 - Pseudo-ops -- END</h3>
+<h3>Pseudo-ops -- END</h3>
 <p>The END pseudo-op tells the assembler that the source 
 program is over.  Any further lines of the source file are 
 ignored and not passed on to the listing. If end-of-file 
@@ -273,7 +273,7 @@ is encountered on the source file before an
 END statement is reached, the assembler will add an END statement 
 to the listing and flag it with a * (missing statement) error.</p>
 
-<h3>3.2 - Pseudo-ops -- EQU</h3>
+<h3>Pseudo-ops -- EQU</h3>
 <p>The EQU pseudo-op is used to assign a specific value to a 
 label, thus the label on this line is REQUIRED.  Once the value 
 is assigned, it cannot be reassigned by writing the label in 
@@ -284,7 +284,7 @@ label TWO:</p>
 <p>The expression in the argument field must contain no forward 
 references.</p>
 
-<h3>3.3 - Pseudo-ops -- DB</h3>
+<h3>Pseudo-ops -- DB</h3>
 <p>The DB (Define Bytes) pseudo-op allows arbitrary 
 bytes to be spliced into the object code.  Its argument is a 
 chain of one or more expressions or string constants 
@@ -296,7 +296,7 @@ could be spliced into the code with the following statement:</p>
 with the following statement:</p>
 <pre><code>DB        "nyaa~",0      ; This is 6 bytes of code.</code></pre>
 
-<h3>3.4 - Pseudo-ops -- DS</h3>
+<h3>Pseudo-ops -- DS</h3>
 <p>The DS (Define String) pseudo-op allows 
 character strings to be spliced into the object code.  Its 
 argument is a chain of zero or more string constants separated by 
@@ -308,7 +308,7 @@ of code.  The message "Kaboom!!" could be spliced into the code
 with the following statement:</p>
 <pre><code>DS        "Kaboom!!"     ;This is 8 bytes of code.</code></pre>
 
-<h3>3.5 - Pseudo-ops -- DW</h3>
+<h3>Pseudo-ops -- DW</h3>
 <p>The FDB (Form Double Bytes) pseudo-op allows 16-bit words to 
 be spliced into the object code.  Its argument is a chain of zero 
 or more expressions separated by commas.  The word is placed into 
@@ -317,7 +317,7 @@ standard MOS Technology order.  The sequence of bytes $FE $FF $00
 $00 $01 $02 could be spliced into the code with the following statement:</p>
 <pre><code>DW        $FFFE, $0000, $0201</code></pre>
 
-<h3>3.6 - Pseudo-ops -- IF, ELSE, ENDI</h3>
+<h3>Pseudo-ops -- IF, ELSE, ENDI</h3>
 <p>These three pseudo-ops allow the assembler to choose whether 
 or not to assemble certain blocks of code based on the result of 
 an expression.  Code that is not assembled is passed through to 
@@ -359,7 +359,7 @@ assembler dies of a fatal error.  This should be adequate for any
 conceivable job, but if you need more, change the constant 
 IFDEPTH in file a65.h and recompile the assembler.</p>
 
-<h3>3.7 - Pseudo-ops -- INCL</h3>
+<h3>Pseudo-ops -- INCL</h3>
 <p>The INCL pseudo-op is used to splice the contents of another 
 file into the current file at assembly time.  The name of the 
 file to be INCLuded is specified as a normal string constant, so 
@@ -372,7 +372,7 @@ files are open simultaneously.  This limit should be enough for
 any conceivable job, but if you need more, change the constant 
 FILES in file a65.h and recompile the assembler.</p>
 
-<h3>3.8 - Pseudo-ops -- MSG</h3>
+<h3>Pseudo-ops -- MSG</h3>
 <p>The MSG pseudo-op is used to print arbitrary strings and/or
 expression results to the console at assembly time. For example,
 adding the following line at the end of the program would print
@@ -380,7 +380,7 @@ out the amount of free ROM space (assuming the labels are inserted
 at the correct spots):
 <pre><code>MSG       "Free bytes: ", VectorTable-EndCode</code></pre>
 
-<h3>3.9 - Pseudo-ops -- ORG</h3>
+<h3>Pseudo-ops -- ORG</h3>
 <p>The ORG pseudo-op is used to set the assembly program 
 counter to a particular value.  The expression that defines this 
 value may contain no forward references.  The default initial 
@@ -395,7 +395,7 @@ cause an error.</p>
 <p>If a label is present on the same line as an ORG statement, 
 it is assigned the new value of the assembly program counter.</p>
 
-<h3>3.10 - Pseudo-ops -- PAGE</h3>
+<h3>Pseudo-ops -- PAGE</h3>
 <p>The PAGE pseudo-op always causes an immediate page ejection 
 in the listing by inserting a form feed ('\f') character before 
 the next line.  If an argument is specified, the argument 
@@ -406,7 +406,7 @@ statement cause a page ejection and would divide the listing into
 60-line pages:</p>
 <pre><code>PAGE      60</code></pre>
 
-<h3>3.11 - Pseudo-ops -- RMB</h3>
+<h3>Pseudo-ops -- RMB</h3>
 <p>The RMB (Reserve Memory Bytes) pseudo-op is used to reserve 
 a block of storage for program variables, or whatever.  This 
 storage is not initialized in any way, so its value at run time 
@@ -416,7 +416,7 @@ counter.  The following statement would reserve 10 bytes of
 storage called "STORAGE":</p>
 <pre><code>STORAGE   RMB       10</code></pre>
 
-<h3>3.12 - Pseudo-ops -- SET</h3>
+<h3>Pseudo-ops -- SET</h3>
 <p>The SET pseudo-op functions like the EQU pseudo-op except 
 that the SET statement can reassign the value of a label that has 
 already been assigned by another SET statement.  Like the EQU 
@@ -429,7 +429,7 @@ The following series of statements would set the value of label
 COUNT     SET       2
 COUNT     SET       3</code></pre>
 
-<h3>3.13 - Pseudo-ops -- TITL</h3>
+<h3>Pseudo-ops -- TITL</h3>
 <p>The TITL pseudo-op sets the running title for the listing.  
 The argument field is required and must be a string constant, 
 though the null string ("") is legal.  This title is printed 
@@ -440,7 +440,7 @@ title "Random Bug Generator -- Ver 3.14159" at the top of every
 page of the listing:</p>
 <pre><code>TITL      "Random Bug Generator -- Ver 3.14159"</code></pre>
 
-<h3>4.0 - Assembly Errors</h3>
+<h2>Assembly Errors</h2>
 <p>When a source line contains an illegal construct, the offending filename
 and line number are printed to stderr. The line 
 is also flagged in the listing with a single-letter code describing 
@@ -452,7 +452,7 @@ a given line, only the first is reported.  For example, the
 illegal label "=$#*'(" would generate the following listing line:</p>
 <pre><code>L  0000   FF 00 00      =$#*'(     CPX       #0</code></pre>
 
-<h3>4.1 - Error * -- Illegal or Missing Statement</h3>
+<h3>Error * -- Illegal or Missing Statement</h3>
 <p>This error occurs when either:</p>
 <ol>
 <li>the assembler reaches the end of the source file without seeing an END statement, or</li>
@@ -464,18 +464,18 @@ ignored section of an IF block.  If the END statement is missing,
 supply it.  If the END statement is in an INCLude file, delete 
 it.</p>
 
-<h3>4.2 - Error ( -- Parenthesis Imbalance</h3>
+<h3>Error ( -- Parenthesis Imbalance</h3>
 <p>For every left parenthesis, there must be a right parenthesis.  Count them.</p>
 
-<h3>4.3 - Error " -- Missing Quotation Mark</h3>
+<h3>Error " -- Missing Quotation Mark</h3>
 <p>Strings have to begin and end with either " or '.  Remember that " only matches " while ' only matches '.</p>
 
-<h3>4.4 - Error A -- Illegal Addressing Mode</h3>
+<h3>Error A -- Illegal Addressing Mode</h3>
 <p>This error occurs if an addressing mode is specified in the 
 argument field that is not legal with the opcode in the opcode 
 field.</p>
 
-<h3>4.5 - Error B -- Branch Target Too Distant</h3>
+<h3>Error B -- Branch Target Too Distant</h3>
 <p>The 6502 relative branch instructions will only reach -128 
 to +127 bytes from the first byte of the instruction following 
 the branch instruction.  If this error occurs, the source code 
@@ -483,13 +483,13 @@ will have to be rearranged to shorten the distance to the branch
 target address or a long branch instruction that will reach 
 anywhere (JMP) will have to be used.</p>
 
-<h3>4.6 - Error D -- Illegal Digit</h3>
+<h3>Error D -- Illegal Digit</h3>
 <p>This error occurs if a digit greater than or equal to the 
 base of a numeric constant is found.  For example, a 2 in a 
 binary number would cause a D error.  Especially, watch for 8 or 
 9 in an octal number.</p>
 
-<h3>4.7 - Error E -- Illegal Expression</h3>
+<h3>Error E -- Illegal Expression</h3>
 <p>This error occurs because of:</p>
 <ol>
 <li>a missing expression where one is required</li>
@@ -498,13 +498,13 @@ binary number would cause a D error.  Especially, watch for 8 or
 <li>a SHL or SHR count that is not 0 thru 15</li>
 </ol>
 
-<h3>4.8 - Error I -- IF-ENDI Imbalance</h3>
+<h3>Error I -- IF-ENDI Imbalance</h3>
 <p>For every IF there must be a corresponding ENDI.  If this 
 error occurs on an ELSE or ENDI statement, the corresponding IF 
 is missing.  If this error occurs on an END statement, one or 
 more ENDI statements are missing.</p>
 
-<h3>4.9 - Error L -- Illegal Label</h3>
+<h3>Error L -- Illegal Label</h3>
 <p>This error occurs because of:</p>
 <ol>
 <li>a non-alphabetic in column 1</li>
@@ -513,7 +513,7 @@ more ENDI statements are missing.</p>
 <li>a label on an IF, ELSE, or ENDI statement</li>
 </ol>
 
-<h3>4.10 - Error M -- Multiply Defined Label</h3>
+<h3>Error M -- Multiply Defined Label</h3>
 <p>This error occurs because of:</p>
 <ol>
 <li>a label defined in column 1 or with the EQU statement being redefined</li>
@@ -521,41 +521,41 @@ more ENDI statements are missing.</p>
 <li>the value of the label changing between assembly passes</li>
 </ol>
 
-<h3>4.11 - Error O -- Illegal Opcode</h3>
+<h3>Error O -- Illegal Opcode</h3>
 <p>The opcode field of a source line may contain only a valid 
 machine opcode, a valid pseudo-op, or nothing at all.  Anything 
 else causes this error.</p>
 
-<h3>4.12 - Error P -- Phasing Error</h3>
+<h3>Error P -- Phasing Error</h3>
 <p>This error occurs because of:</p>
 <ol>
 <li>a forward reference in a EQU, ORG, RMB, or SET statement</li>
 <li>a label disappearing between assembly passes</li>
 </ol>
 
-<h3>4.13 - Error R -- Illegal Register</h3>
+<h3>Error R -- Illegal Register</h3>
 <p>This error occurs either when the register designator A or B 
 is used with a machine opcode that does not permit it, or when 
 the register designator is missing with a machine opcode that 
 requires it.</p>
 
-<h3>4.14 - Error S -- Illegal Syntax</h3>
+<h3>Error S -- Illegal Syntax</h3>
 <p>This error means that an argument field is scrambled.  Sort the mess out and reassemble.</p>
 
-<h3>4.15 - Error T -- Too Many Arguments</h3>
+<h3>Error T -- Too Many Arguments</h3>
 <p>This error occurs if there are more items (expressions, 
 register designators, etc.) in the argument field than the opcode 
 or pseudo-op requires.  The assembler ignores the extra items but 
 issues this error in case something is really mangled.</p>
 
-<h3>4.16 - Error U -- Undefined Label</h3>
+<h3>Error U -- Undefined Label</h3>
 <p>This error occurs if a label is referenced in an expression 
 but not defined anywhere in the source program.  If you are 
 "sure" you have defined the label, note that upper and lower case 
 letters in labels are different.  Defining "LABEL" does not 
 define "Label."</p>
 
-<h3>4.17 - Error V -- Illegal Value</h3>
+<h3>Error V -- Illegal Value</h3>
 <p>This error occurs because:</p>
 <ol>
 <li>an index offset is not 0 thru 255</li>
@@ -565,25 +565,25 @@ define "Label."</p>
 <li>an INCL argument refers to a file that does not exist</li>
 </ol>
 
-<h3>5.0 - Warning Messages</h3>
+<h3>Warning Messages</h3>
 <p>Some errors that occur during the parsing of the cross-
 assembler command line are non-fatal.  The cross-assembler flags 
 these with a message on the C "stdout" device (by default, the 
 console) beginning with the word "Warning."  The messages are 
 listed below:</p>
 
-<h3>5.1 - Warning -- Illegal Option Ignored</h3>
+<h3>Warning -- Illegal Option Ignored</h3>
 <p>The only options that the cross-assembler knows are -l and  
 -o.  Any other command line argument beginning with - will draw 
 this error.</p>
 
-<h3>5.2 - Warning -- -l Option Ignored -- No File Name</h3>
-<h3>5.3 - Warning -- -o Option Ignored -- No File Name</h3>
+<h3>Warning -- -l Option Ignored -- No File Name</h3>
+<h3>Warning -- -o Option Ignored -- No File Name</h3>
 <p>The -l and -o options require a file name to tell the 
 assembler where to put the listing file or object file.  If this 
 file name is missing, the option is ignored.</p>
 
-<h3>5.4 - Warning -- Extra Source File Ignored</h3>
+<h3>Warning -- Extra Source File Ignored</h3>
 <p>The cross-assembler will only assemble one file at a time, 
 so source file names after the first are ignored.  To assemble a 
 second file, invoke the assembler again.  Note that under CP/M-80,
@@ -591,57 +591,57 @@ the old trick of reexecuting a core image will NOT work as
 the initialized data areas are not reinitialized prior to the 
 second run.</p>
 
-<h3>5.5  Warning -- Extra Listing File Ignored</h3>
-<h3>5.6  Warning -- Extra Object File Ignored</h3>
+<h3>Warning -- Extra Listing File Ignored</h3>
+<h3>Warning -- Extra Object File Ignored</h3>
 <p>The cross-assembler will only generate one listing and one 
 object file per assembly run, so -l and -o options after the 
 first are ignored.</p>
 
-<h3>6.0 - Fatal Error Messages</h3>
+<h2>Fatal Error Messages</h2>
 <p>Several errors that occur during the parsing of the cross-
 assembler command line or during the assembly run are fatal.  The 
 cross-assembler flags these with a message on the C "stdout" 
 device (by default, the console) beginning with the words "Fatal 
 Error."  The messages are explained below:</p>
 
-<h3>6.1 - Fatal Error -- No Source File Specified</h3>
+<h3>Fatal Error -- No Source File Specified</h3>
 <p>This one is self-explanatory.  The assembler does not know what to assemble.</p>
 
-<h3>6.2 - Fatal Error -- Source File Did Not Open</h3>
+<h3>Fatal Error -- Source File Did Not Open</h3>
 <p>The assembler could not open the source file.  The most 
 likely cause is that the source file as specified on the command 
 line does not exist.  On larger systems, there could also be 
 privilege violations.  Rarely, a read error in the disk 
 directory could cause this error.</p>
 
-<h3>6.3 - Fatal Error -- Listing File Did Not Open</h3>
-<h3>6.4 - Fatal Error -- Object File Did Not Open</h3>
+<h3>Fatal Error -- Listing File Did Not Open</h3>
+<h3>Fatal Error -- Object File Did Not Open</h3>
 <p>This error indicates either a defective listing or object 
 file name or a full disk directory.  Correct the file name or 
 make more room on the disk.</p>
 
-<h3>6.5 - Fatal Error -- Error Reading Source File</h3>
+<h3>Fatal Error -- Error Reading Source File</h3>
 <p>This error generally indicates a read error in the disk data 
 space.  Use your backup copy of the source file (You do have one, 
 don't you?) to recreate the mangled file and reassemble.</p>
 
-<h3>6.6 - Fatal Error -- Disk or Directory Full</h3>
+<h3>Fatal Error -- Disk or Directory Full</h3>
 <p>This one is self-explanatory.  Some more space must be found 
 either by deleting files or by using a disk with more room on it.</p>
 
-<h3>6.7 - Fatal Error -- File Stack Overflow</h3>
+<h3>Fatal Error -- File Stack Overflow</h3>
 <p>This error occurs if you exceed the INCLude file limit of 
 four files open simultaneously.  This limit can be increased by 
 increasing the constant FILES in file A65.H or A65C.H and 
 recompiling the cross-assembler.</p>
 
-<h3>6.8 - Fatal Error -- If Stack Overflow</h3>
+<h3>Fatal Error -- If Stack Overflow</h3>
 <p>This error occurs if you exceed the nesting limit of 16 IF 
 blocks.  This limit can be increased by increasing the constant 
 IFDEPTH in file A65.H or A65C.H and recompiling the cross-
 assembler.</p>
 
-<h3>6.9 - Fatal Error -- Too Many Symbols</h3>
+<h3>Fatal Error -- Too Many Symbols</h3>
 <p>Congratulations!  You have run out of memory.  The space for 
 the cross-assembler's symbol table is allocated at run-time using 
 the C library function alloc(), so the cross-assembler will use 

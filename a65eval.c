@@ -21,6 +21,7 @@ arithmetic expressions.
 /*  Get access to global mailboxes defined in A65.C:			*/
 
 extern char line[];
+extern char lastglobal[];
 extern int filesp, forwd, forceabs, pass;
 extern unsigned argattr, pc;
 extern FILE_INFO filestk[];
@@ -236,6 +237,7 @@ static void exp_error(char c) {
 
 static int oldt = FALSE;
 static int quote = FALSE;
+static char namebuf[MAXLINE];
 
 TOKEN *lex() {
 	SCRATCH char c, *p;
@@ -253,6 +255,14 @@ TOKEN *lex() {
 		}
 		else {
 			token.attr = VAL;  token.valu = 0;
+
+			/* handle local label */
+			if (token.sval[0] == '.') {
+				strcpy(namebuf, token.sval);
+				strcpy(token.sval, lastglobal);
+				strcat(token.sval, namebuf);
+			}
+
 			if ((s = find_symbol(token.sval))) {
 				token.valu = s -> valu;
 				if (pass == 2 && s -> attr & FORWD) forwd = TRUE;

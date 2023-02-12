@@ -46,6 +46,9 @@ parse the source line and convert it into the object bytes that it represents.
 /*  Define global mailboxes for all modules:				*/
 
 char errcode, line[MAXLINE + 1], title[MAXLINE];
+
+/* the name of the last global label parsed by the program */
+char lastglobal[MAXLINE];
 int pass = 0;
 int eject, filesp, forwd, forceabs, listhex;
 unsigned address, argattr, bytes, errors, listleft, obj[65536], pagelen, pc;
@@ -203,6 +206,8 @@ static void flush() {
     while (popc() != '\n');
 }
 
+static char labelname[MAXLINE * 2];
+
 static void do_label() {
     SCRATCH SYMBOL *l;
 	char *ch;
@@ -219,15 +224,26 @@ static void do_label() {
 			ch++;
 		}
 
+		/* handle local labels */
+		if (label[0] == '.') {
+			strcpy(labelname, lastglobal);
+			strcat(labelname, label);
+			printf("%s\n", labelname);
+		}
+		else {
+			strcpy(lastglobal, label);
+			strcpy(labelname, label);
+		}
+
 		if (pass == 1) {
 			/* add the label to the symbol tree */
-			if (!((l = new_symbol(label)) -> attr)) {
+			if (!((l = new_symbol(labelname)) -> attr)) {
 				l -> attr = FORWD + VAL;
 				l -> valu = pc;
 			}
 		}
 		else {
-			if ((l = find_symbol(label))) {
+			if ((l = find_symbol(labelname))) {
 				l -> attr = VAL;
 				if (l -> valu != pc) error('M');
 			}
