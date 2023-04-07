@@ -86,8 +86,8 @@ all modules of the cross-assembler.
 typedef enum {
 	ALIGN = 1,
 	BASE,
+	DATE,
 	DB,
-	DS,
 	DW,
 	ELSE,
 	END,

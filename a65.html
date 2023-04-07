@@ -8,14 +8,6 @@ body {
     width: 800px;
 }
 
-p {
-    text-indent: 2em;
-}
-
-p.no-indent {
-    text-indent: 0em;
-}
-
 code {
     font-family: monospace, monospace;
 }
@@ -34,19 +26,21 @@ pre code {
 <body>
 <div style="text-align:center">
 <h1>A65 6502 Cross-Assembler</h1>
-<h3>Version 0.2n</h3>
 <h3>Copyright (c) 1986 William C. Colley, III</h3>
-<h3>Modifications by Nathan Misner</h3>
+<h3><a href="https://git.sr.ht/~ndiddy/a65">https://git.sr.ht/~ndiddy/a65</a></h3>
 </div>
 <h3>Legal Note</h3>
 <p>This package may be used for any commercial or 
 non-commercial purpose.  It may be copied and 
 distributed freely provided that any fee charged 
 by the distributor of the copy does not exceed the 
-sum of:  1) the cost of the media the copy is 
-written on,  2) any required costs of shipping the 
-copy, and  3) a nominal handling fee.  Any other 
-distribution requires the written permission of 
+sum of:
+<ol>
+<li>the cost of the media the copy is written on,</li>
+<li>any required costs of shipping the copy, and</li>
+<li>a nominal handling fee.</li>
+</ol>
+Any other distribution requires the written permission of 
 the author.  Also, the author's copyright notices 
 shall not be removed from the program source, the 
 program object, or the program documentation.</p>
@@ -75,27 +69,10 @@ file is specified, the object is written to this file in absolute
 binary format.</p>
 
 <p>The command line for the 6502 cross-assembler looks like this:</p>
-<pre><code>a65 source_file { -l list_file } { -o object_file }</code></pre>
-<p class="no-indent">where the { } indicates that the specified item is optional.
-Some examples are in order:</p>
-<pre><code>a65 test65.asm                          source:   test65.asm
-                                        listing:  none
-                                        object:   none
-
-a65 test65.asm -l test65.prn            source:   test65.asm
-                                        listing:  test65.prn
-                                        object:   none
-
-a65 test65.asm -o test65.bin            source:   test65.asm
-                                        listing:  none
-                                        object:   test65.bin
-
-a65 test65.asm -l test65.prn -o test65.bin
-                                        source:   test65.asm
-                                        listing:  test65.prn
-                                        object:   test65.bin</code></pre>
+<pre><code>a65 source_file { -l list_file } { -o object_file } { -e export_file }</code></pre>
+<p>where the { } indicates that the specified item is optional.
 					
-<p>The order in which the source, listing, and object files are 
+<p>The order in which the source, listing, object, and export files are 
 specified does not matter.  Note that no default file name extensions are supplied by the assembler as this gives rise to portability problems.</p>
 
 <h2>Format of Cross-Assembler Source Lines</h2>
@@ -132,7 +109,7 @@ semicolon which signals the assembler to pass the rest of the
 line to the listing and otherwise ignore it.  Thus, the source 
 line looks like this:</p>
 <pre><code>{label}{ opcode{ arguments}}{;commentary}</code></pre>
-<p class="no-indent">where the { } indicates that the specified item is optional.
+<p>where the { } indicates that the specified item is optional.
 Some examples are in order:</p>
 <pre><code>column 1
    |
@@ -148,7 +125,7 @@ Some examples are in order:</p>
 <h3>Labels</h3>
 <p>A label is any sequence of alphabetic or numeric characters 
 starting with an alphabetic.  The legal alphabetics are:</p>
-<pre><code>& , . ? [ \ ] ^ _  ` { | }  ~  A-Z  a-z</code></pre>
+<pre><code>& , ? [ \ ] ^ _  ` { | }  ~  A-Z  a-z</code></pre>
 <p>The numeric characters are the digits 0-9.  Note that "A" is not 
 the same as "a" in a label.  This can explain mysterious U 
 (undefined label) errors occurring when a label appears to be 
@@ -172,6 +149,22 @@ example:</p>
 <pre><code>L1   EQU  L2 + 1   ; L2 is forward-referenced here.
 L2
 L3   EQU  L2 + 1   ; L2 is not forward-referenced here.</code></pre>
+
+<p>Starting a label with a period will concatenate it in the symbol table
+with the last label that did not start with a period. For example, in this
+code:</p>
+<pre><code>WriteMem:
+      ldx      #10
+.loop:
+      lda      source,x
+      sta      dest,x
+      dex
+      bpl      .loop
+      rts</code></pre>
+<p>".loop" will be added to the symbol table as "WriteMem.loop". As you can
+see in the example, the label is accessible inside the same "scope" as ".loop",
+but outside the "scope" (after the next label that doesn't start with a period),
+you'll have to refer to it as "WriteMem.loop".</p>
 
 <h3>Numeric Constants</h3>
 
@@ -214,7 +207,7 @@ following examples:</p>
 <pre><code>"" and ''           evaluate to $0000
 "A" and 'A'         evaluate to $0041
 "AB"                evaluates to $4142</code></pre>
-<p class="no-indent">Note that the null string "" is legal and evaluates to $0000.</p>
+<p>Note that the null string "" is legal and evaluates to $0000.</p>
 
 <h3>Expressions</h3>
 <p>An expression is made up of labels, numeric constants, and 
@@ -231,7 +224,7 @@ fairly natural order of precedence:</p>
                AND
                OR, XOR
 Lowest         HIGH, LOW</code></pre>
-<p class="no-indent">A few notes about the various operators are in order:</p>
+<p>A few notes about the various operators are in order:</p>
 <ol>
 <li>The remainder operator MOD yields the remainder from dividing its left operand by its right operand.</li>
 <li>The shifting operators SHL and SHR shift their left 
@@ -243,19 +236,19 @@ also be written as <, <= or =<, =, >= or =>, and <> or
 statement is true, 0 otherwise.</li>
 <li>The logical opeators NOT, AND, OR, and XOR do bitwise 
 operations on their operand(s).</li>
-<li>HIGH and LOW extract the high or low byte, of an 
+<li>HIGH and LOW extract the high or low byte of an 
 expression.</li>
 <li>The special symbol * can be used in place of a label or 
 constant to represent the value of the program counter 
 before any of the current line has been processed.</li></ol>
-<p class="no-indent">Some examples are in order at this point:</p>
+<p>Some examples are in order at this point:</p>
 <pre><code>2 + 3 * 4                          evaluates to 14
 (2 + 3) * 4                        evaluates to 20
 NOT %11110000 XOR %00001010        evaluates to %00000101
 HIGH $1234 SHL 1                   evaluates to $0024
 @001 EQ 0                          evaluates to 0
 @001 = 2 SHR 1                     evaluates to $FFFF</code></pre>
-<p class="no-indent">All arithmetic is unsigned with overflow from the 16-bit 
+<p>All arithmetic is unsigned with overflow from the 16-bit 
 word ignored.  Thus:</p>
 <pre><code>32768 * 2                          evaluates to 0</code></pre>
 
@@ -264,6 +257,48 @@ word ignored.  Thus:</p>
 represent machine instructions.  They are, rather, directives to 
 the assembler.  These directives require various numbers and 
 types of arguments.  They will be listed individually below.</p>
+
+<h3>Pseudo-ops -- ALIGN</h3>
+<p>The ALIGN pseudo-op pads the object file with zeroes until the program
+counter is divisible by its parameter. For example, the following statement
+will pad the object file until the program counter is divisible by $4000:</p>
+<pre><code>ALIGN      $4000</code></pre>
+
+<h3>Pseudo-ops -- BASE</h3>
+<p>The BASE pseudo-op will set the assembly program counter to a specific
+value without padding the file. This is useful when targeting platforms
+that have memory banking. For example, the following statement will set the
+program counter to $8000:</p>
+<pre><code>BASE      $8000</code></pre>
+<p>Note that unlike with the ORG pseudo-op, it's allowable to BASE backwards
+from the current assembly program counter.</p>
+
+<h3>Pseudo-ops -- DATE</h3>
+<p>The DATE pseudo-op inserts the date the file was assembled (in your
+computer's local time) as a NUL-terminated ASCII string. Regardless of
+your computer's locale, the date will always be in abbreviated month,
+day, 4-digit year format (e.g. "Feb 19 2023").</p>
+
+<h3>Pseudo-ops -- DB</h3>
+<p>The DB (Define Bytes) pseudo-op allows arbitrary 
+bytes to be spliced into the object code.  Its argument is a 
+chain of one or more expressions or string constants 
+separated by commas. Any expressions must evaluate to -128 thru 255.
+The sequence of bytes $FE, $FF, $00, $01, $02
+could be spliced into the code with the following statement:</p>
+<pre><code>DB        -2, -1, 0, 1, 2</code></pre>
+<p>The NUL-terminated string "nyaa~" could be spliced into the code
+with the following statement:</p>
+<pre><code>DB        "nyaa~",0      ; This is 6 bytes of code.</code></pre>
+
+<h3>Pseudo-ops -- DW</h3>
+<p>The DW (Define Word) pseudo-op allows 16-bit words to 
+be spliced into the object code.  Its argument is a chain of zero 
+or more expressions separated by commas.  The word is placed into 
+memory low byte in low address, high byte in high address as per 
+standard MOS Technology order.  The sequence of bytes $FE $FF $00
+$00 $01 $02 could be spliced into the code with the following statement:</p>
+<pre><code>DW        $FFFE, $0000, $0201</code></pre>
 
 <h3>Pseudo-ops -- END</h3>
 <p>The END pseudo-op tells the assembler that the source 
@@ -284,38 +319,21 @@ label TWO:</p>
 <p>The expression in the argument field must contain no forward 
 references.</p>
 
-<h3>Pseudo-ops -- DB</h3>
-<p>The DB (Define Bytes) pseudo-op allows arbitrary 
-bytes to be spliced into the object code.  Its argument is a 
-chain of one or more expressions or string constants 
-separated by commas. Any expressions must evaluate to -128 thru 255.
-The sequence of bytes $FE, $FF, $00, $01, $02
-could be spliced into the code with the following statement:</p>
-<pre><code>DB        -2, -1, 0, 1, 2</code></pre>
-<p class="no-indent">The NUL-terminated string "nyaa~" could be spliced into the code
-with the following statement:</p>
-<pre><code>DB        "nyaa~",0      ; This is 6 bytes of code.</code></pre>
+<h3>Pseudo-ops -- EXP</h3>
+<p>The EXP pseudo-op is used to add the specified symbol as a constant in
+the export file. This is usable as a workaround for A65's lack of a relocating
+linker. For example, this source file:</p>
+<pre><code>      ORG      $6500
+      EXP      InfiniteLoop
 
-<h3>Pseudo-ops -- DS</h3>
-<p>The DS (Define String) pseudo-op allows 
-character strings to be spliced into the object code.  Its 
-argument is a chain of zero or more string constants separated by 
-blanks, tabs, or commas.  If a comma occurs with no preceding 
-string constant, an S (syntax) error results.  The string 
-contants are not truncated to two bytes, but are instead copied 
-verbatim into the object code.  Null strings result in no bytes 
-of code.  The message "Kaboom!!" could be spliced into the code 
-with the following statement:</p>
-<pre><code>DS        "Kaboom!!"     ;This is 8 bytes of code.</code></pre>
+InfiniteLoop:
+      JMP      InfiniteLoop</code></pre>
+would generate this export file:
+<pre><code>; Autogenerated export file - do not modify!
 
-<h3>Pseudo-ops -- DW</h3>
-<p>The FDB (Form Double Bytes) pseudo-op allows 16-bit words to 
-be spliced into the object code.  Its argument is a chain of zero 
-or more expressions separated by commas.  The word is placed into 
-memory low byte in low address, high byte in high address as per 
-standard MOS Technology order.  The sequence of bytes $FE $FF $00
-$00 $01 $02 could be spliced into the code with the following statement:</p>
-<pre><code>DW        $FFFE, $0000, $0201</code></pre>
+InfiniteLoop      equ      $6500</code></pre>
+<p>The EXP pseudo-op will throw a fatal error if tno export file was specified (otherwise
+this could mess up your build process).</p>
 
 <h3>Pseudo-ops -- IF, ELSE, ENDI</h3>
 <p>These three pseudo-ops allow the assembler to choose whether 
@@ -328,7 +346,7 @@ references.  If the value of the argument is non-zero, the block
 is assembled.  Otherwise, the block is ignored.  The ENDI pseudo-
 op signals the end of the conditionally assembled block.  For 
 example:</p>
-<pre><code>IF   EXPRESSION     ;This whole thing generates
+<pre><code>IF   EXPRESSION     ;  This whole thing generates
 FCB  $01, $02, $03  ;  no code whatsoever if
 ENDI                ;  EXPRESSION is zero.</code></pre>
 
@@ -358,6 +376,12 @@ ELSE and ENDI statements must have a corresponding IF statement.</p>
 assembler dies of a fatal error.  This should be adequate for any 
 conceivable job, but if you need more, change the constant 
 IFDEPTH in file a65.h and recompile the assembler.</p>
+
+<h3>Pseudo-ops -- INCB</h3>
+<p>The INCB (Include Binary) pseudo-op is used to insert the contents of a
+file as a series of bytes into the current file at assembly time. The name of the file to be
+included is specified as a normal string constant, for example:</p>
+<pre><code>INCB      "fridge_gfx.bin"</code></pre>
 
 <h3>Pseudo-ops -- INCL</h3>
 <p>The INCL pseudo-op is used to splice the contents of another 
@@ -573,13 +597,14 @@ console) beginning with the word "Warning."  The messages are
 listed below:</p>
 
 <h3>Warning -- Illegal Option Ignored</h3>
-<p>The only options that the cross-assembler knows are -l and  
+<p>The only options that the cross-assembler knows are -e, -l, and  
 -o.  Any other command line argument beginning with - will draw 
 this error.</p>
 
+<h3>Warning -- -e Option Ignored -- No File Name</h3>
 <h3>Warning -- -l Option Ignored -- No File Name</h3>
 <h3>Warning -- -o Option Ignored -- No File Name</h3>
-<p>The -l and -o options require a file name to tell the 
+<p>The -e, -l, and -o options require a file name to tell the 
 assembler where to put the listing file or object file.  If this 
 file name is missing, the option is ignored.</p>
 
@@ -606,6 +631,10 @@ Error."  The messages are explained below:</p>
 
 <h3>Fatal Error -- No Source File Specified</h3>
 <p>This one is self-explanatory.  The assembler does not know what to assemble.</p>
+
+<h3>Fatal Error -- No Export File Specified</h3>
+<p>This error is thrown if your code includes the "EXP" pseudo-op but you ran the assembler
+without specifying an export file to write your exports to.</p>
 
 <h3>Fatal Error -- Source File Did Not Open</h3>
 <p>The assembler could not open the source file.  The most 

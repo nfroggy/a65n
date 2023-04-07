@@ -36,6 +36,7 @@ parse the source line and convert it into the object bytes that it represents.
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /*  Get global goodies:  */
 
@@ -73,7 +74,6 @@ static int done, ifsp, off;
 int main(int argc, char **argv) {
     SCRATCH unsigned *o;
 
-    /* printf("6502 Cross-Assembler (Portable) Ver 0.2n\n"); */
 	printf("6502 Cross-Assembler (Portable), built %s\n", __DATE__);
     printf("Copyright (c) 1986 William C. Colley, III\n\n");
 
@@ -343,6 +343,10 @@ do_zero_page:
     return;
 }
 
+static time_t time_data;
+static struct tm *localtime_data;
+static char date_buff[80];
+
 static void pseudo_op() {
     SCRATCH char *s;
     SCRATCH unsigned count, *o, result, u;
@@ -371,18 +375,6 @@ static void pseudo_op() {
 		} while ((token.attr & TYPE) == SEP);
 		break;
 
-	case DS:
-		do_label();
-		while ((lex()->attr & TYPE) != EOL) {
-			if ((token.attr & TYPE) == STR) {
-				for (s = token.sval; *s; *o++ = *s++)
-					++bytes;
-				if ((lex()->attr & TYPE) != SEP) unlex();
-			}
-			else error('S');
-		}
-		break;
-
 	case DW:
 		do_label();
 		do {
@@ -391,6 +383,19 @@ static void pseudo_op() {
 			*o++ = low(u);  *o++ = high(u);
 			bytes += 2;
 		} while ((token.attr & TYPE) == SEP);
+		break;
+
+	case DATE:
+		do_label();
+		/* i.e. "Mar 4 2023" */
+		time(&time_data);
+		localtime_data = localtime(&time_data);
+		strftime(date_buff, sizeof(date_buff), "%b %d %Y", localtime_data);
+		for (s = date_buff; *s; *o++ = *s++) {
+			++bytes;
+		}
+		*o++ = '\0';
+		++bytes;
 		break;
 
 	case ELSE:  
@@ -404,10 +409,6 @@ static void pseudo_op() {
 		if (filesp) { listhex = FALSE;  error('*'); }
 		else {
 			done = eject = TRUE;
-			/*
-			if (pass == 2 && (lex() -> attr & TYPE) != EOL) {
-				unlex();  bseek(address = expr());
-			}*/
 			if (ifsp) error('I');
 		}
 		break;
