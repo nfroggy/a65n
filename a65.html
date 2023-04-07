@@ -60,9 +60,10 @@ expensive facilities on hand.  A cross-assembler allows you to
 use these facilites to develop code for a 6502.</p>
 
 <p>This program requires one input file (your 6502 source 
-code) and zero to two output files (the listing and the object).  
+code) and zero to three output files (the listing, the object, and the exports).  
 The input file MUST be specified, or the assembler will bomb on a 
-fatal error.  The listing and object files are optional.  If no 
+fatal error.  The listing and object files are optional.  The export file must be
+specified if the source code contains any EXP pseudo-ops. If no 
 listing file is specified, no listing is generated, and if no 
 object file is specified, no object is generated.  If the object 
 file is specified, the object is written to this file in absolute
