@@ -11,6 +11,7 @@ arithmetic expressions.
 */
 
 #include <ctype.h>
+#include <string.h>
 
 /*  Get global goodies:  */
 

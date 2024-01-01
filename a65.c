@@ -349,10 +349,9 @@ static char date_buff[80];
 
 static void pseudo_op() {
     SCRATCH char *s;
-    SCRATCH unsigned count, *o, result, u;
+    SCRATCH unsigned count, *o, u;
     SCRATCH SYMBOL *l;
 	FILE *binfp;
-	size_t size;
 
     o = obj;
     switch (opcod -> valu) {

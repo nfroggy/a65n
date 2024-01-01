@@ -54,7 +54,6 @@ static void record();
 SYMBOL *new_symbol(char *nam) {
     SCRATCH int i;
     SCRATCH SYMBOL **p, *q;
-    void fatal_error();
 
     for (p = &sroot; (q = *p) && (i = strcmp(nam,q -> sname)); )
 		p = i < 0 ? &(q -> left) : &(q -> right);
@@ -348,7 +347,6 @@ static void check_page() {
 static FILE *outfile = NULL;
 static unsigned cnt = 0;
 static unsigned addr = 0;
-static unsigned bbase = 0;
 static uint8_t buf[HEXSIZE];
 
 /*  Binary file open routine.  If the file is already open, a warning	*/
