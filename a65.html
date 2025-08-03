@@ -5,7 +5,7 @@
 body {
     line-height: 140%;
     margin: auto;
-    width: 800px;
+    width: 1000px;
 }
 
 code {
@@ -27,7 +27,8 @@ pre code {
 <div style="text-align:center">
 <h1>A65 6502 Cross-Assembler</h1>
 <h3>Copyright (c) 1986 William C. Colley, III</h3>
-<h3><a href="https://git.sr.ht/~ndiddy/a65">https://git.sr.ht/~ndiddy/a65</a></h3>
+<h3>Copyright (c) 2023-2025 Nathan Misner</h3>
+<h3><a href="https://github.com/nfroggy/a65n">https://github.com/nfroggy/a65n</a></h3>
 </div>
 <h3>Legal Note</h3>
 <p>This package may be used for any commercial or 
@@ -70,10 +71,10 @@ file is specified, the object is written to this file in absolute
 binary format.</p>
 
 <p>The command line for the 6502 cross-assembler looks like this:</p>
-<pre><code>a65 source_file { -l list_file } { -o object_file } { -e export_file }</code></pre>
+<pre><code>a65 source_file { -b base_dir } { -l list_file } { -o object_file } { -e export_file }</code></pre>
 <p>where the { } indicates that the specified item is optional.
 					
-<p>The order in which the source, listing, object, and export files are 
+<p>The order in which the source, base directory, listing, object, and export files are
 specified does not matter.  Note that no default file name extensions are supplied by the assembler as this gives rise to portability problems.</p>
 
 <h2>Format of Cross-Assembler Source Lines</h2>
@@ -380,13 +381,13 @@ IFDEPTH in file a65.h and recompile the assembler.</p>
 
 <h3>Pseudo-ops -- INCB</h3>
 <p>The INCB (Include Binary) pseudo-op is used to insert the contents of a
-file as a series of bytes into the current file at assembly time. The name of the file to be
+file as a series of bytes into the current file at assembly time. If a base directory was specified using the -b command-line option, that directory and the "/" character will be prepended to the specified filename when the assembler attempts to open the file. The name of the file to be
 included is specified as a normal string constant, for example:</p>
 <pre><code>INCB      "fridge_gfx.bin"</code></pre>
 
 <h3>Pseudo-ops -- INCL</h3>
 <p>The INCL pseudo-op is used to splice the contents of another 
-file into the current file at assembly time.  The name of the 
+file into the current file at assembly time.  If a base directory was specified using the -b command-line option, that directory and the "/" character will be prepended to the specified filename when the assembler attempts to open the file. The name of the
 file to be INCLuded is specified as a normal string constant, so 
 the following line would splice the contents of file "const.def" 
 into the source code stream:</p>

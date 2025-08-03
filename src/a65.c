@@ -47,7 +47,8 @@ parse the source line and convert it into the object bytes that it represents.
 /*  Define global mailboxes for all modules:				*/
 
 char errcode, line[MAXLINE + 1], title[MAXLINE];
-
+/* the name of the base directory that should be prepended to every INCL/INCB filename in the source */
+char basedir[MAXLINE];
 /* the name of the last global label parsed by the program */
 char lastglobal[MAXLINE];
 int pass = 0;
@@ -74,14 +75,23 @@ static int done, ifsp, off;
 int main(int argc, char **argv) {
     SCRATCH unsigned *o;
 
-	printf("6502 Cross-Assembler (Portable), built %s\n", __DATE__);
-    printf("Copyright (c) 1986 William C. Colley, III\n\n");
+	printf("6502 Cross-Assembler (Portable)\n");
+	printf("Copyright (c) 1986 William C. Colley, III\n");
+	printf("Copyright (c) 2023-2025 Nathan Misner\n\n");
 
     while (--argc > 0) {
 		if (**++argv == '-') {
 			switch (toupper(*++*argv)) {
+			case 'B':
+				if (!*++*argv) {
+					if (!--argc) { warning(NODIR);  break; }
+					else ++argv;
+				}
+				strcpy(basedir, *argv);
+				break;
+
 			case 'E':
-				if (!*++ * argv) {
+				if (!*++*argv) {
 					if (!--argc) { warning(NOEXP);  break; }
 					else ++argv;
 				}
@@ -346,6 +356,7 @@ do_zero_page:
 static time_t time_data;
 static struct tm *localtime_data;
 static char date_buff[80];
+static char filename_buff[MAXLINE * 2 + 1];
 
 static void pseudo_op() {
     SCRATCH char *s;
@@ -467,7 +478,13 @@ static void pseudo_op() {
 	case INCB:	/* include binary */
 		do_label();
 		if ((lex()->attr & TYPE) == STR) {
-			binfp = fopen(token.sval, "rb");
+			if (*basedir) {
+				sprintf(filename_buff, "%s/%s", basedir, token.sval);
+				binfp = fopen(filename_buff, "rb");
+			}
+			else {
+				binfp = fopen(token.sval, "rb");
+			}
 			if (!binfp) {
 				error('V');
 			}
@@ -486,7 +503,13 @@ static void pseudo_op() {
 		listhex = FALSE;  do_label();
 		if ((lex() -> attr & TYPE) == STR) {
 			if (++filesp == FILES) fatal_error(FLOFLOW);
-			filestk[filesp].fp = fopen(token.sval, "r");
+			if (*basedir) {
+				sprintf(filename_buff, "%s/%s", basedir, token.sval);
+				filestk[filesp].fp = fopen(filename_buff, "r");
+			}
+			else {
+				filestk[filesp].fp = fopen(token.sval, "r");
+			}
 			if (!filestk[filesp].fp) {
 				--filesp; error('V');
 			}
